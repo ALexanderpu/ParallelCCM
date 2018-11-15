@@ -54,6 +54,10 @@ createPerRealizationDensityPlot <- function(ccmXY, window, strFileName, strXDesc
   dev.off()
 }
 
+
+
+
+
 SuicideModel <- function(csv_df, window_size, Edimension){
   delay <- Edimension-1
   x = head(rowSums(embed(csv_df$Suicide.Attempt.Count, window_size)), -(delay+1)) 
