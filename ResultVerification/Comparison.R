@@ -25,7 +25,7 @@ library('reshape2')
 home_dir = getwd() # run the program in the parent directory
 ccm_parallel_csv_dir = paste(home_dir, "/ParallelCCMOutput/", sep="")
 ccm_csv_dir = paste(home_dir, "/TestCSVData/", sep="")
-output_dir = paste(home_dir, "/ImageCompareResult", sep="")
+output_dir = paste(home_dir, "/ResultVerification/ImageCompareResult/", sep="")
 
 createGGPlotInternal <- function(ccmXYIncludingNonnegColumn, isDisplayMAE, isTruncatePerRealizationRho)
 {
@@ -65,12 +65,12 @@ createPerRealizationDensityPlot <- function(ccmXY, strFileName, strXDescription=
   print(result)
   dev.off()
 }
-
+#  call ccm library in R
 source = "x"
 target = "y"
 TimeSeries = read.csv(paste(ccm_csv_dir, csv_file, sep=""))
 maxL <- min(lib_size, nrow(TimeSeries[target]))
-stepL <- 100
+stepL <- 50
 vecLibrarySizes <- seq(50, maxL, stepL)
 ccmXY <- ccm(TimeSeries, E=E, tau=tau, lib_column=source, target_column=target, lib_sizes=vecLibrarySizes, num_samples=samples)
 ccmXY$nonnegRho = pmax(0, ccmXY$rho)
@@ -78,5 +78,15 @@ ccmXY$nonnegRho = pmax(0, ccmXY$rho)
 LongestL = max(ccmXY$lib_size)
 print(paste("The longest L is:", LongestL))
 
+#create ccm plot
+print("start to plot ccm library result")
+SaveFileName = paste(output_dir, "ccm_rlib", "_samples_", samples, "_E_", E, "_tau_", tau, "_L_", lib_size, ".png", sep="")
+print(SaveFileName)
+createPerRealizationDensityPlot(ccmXY, SaveFileName, isTruncatePerRealizationRho=TRUE)
+print("finish the plot")
 
 
+# create ccm parallel plot
+print("start to plot ccm parallel result")
+
+print("finish the plot")

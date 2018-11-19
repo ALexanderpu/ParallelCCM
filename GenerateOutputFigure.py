@@ -5,9 +5,9 @@ Rfile = cwd + "/ResultVerification/Comparison.R"
 CSVInput = "test_float_1000.csv"
 ParallelInput = "output_withcuda.csv"
 # ccm parameters
-samples = "250"
+samples = "1000"
 tau = "3"
 E = "3"
-L = "100"
+L = "1000"
 
 subprocess.call(["/Users/bopu/anaconda3/bin/Rscript", Rfile, CSVInput, ParallelInput, samples, tau, E, L])
