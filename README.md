@@ -19,11 +19,13 @@ the performance benchmark:
 1000:
 
 gpu sorting running time = 1.072339s
+
 cpu sorting running time = 0.534552s
 
 10000:
 
 gpu sorting running time = 13.196652s
+
 cpu sorting running time = 33.870094s
 
 
