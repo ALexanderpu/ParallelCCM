@@ -12,6 +12,7 @@
   Another way to tell the compiler that loops iterations are independent is to specify it explicitly by using a different directive: loop, with the clause independent  --  #pragma acc loop independent
   
   Parallel loop vs kernel
+
 PARALLEL LOOP 
 
     It is the programmer's responsibility to ensure that parallelism is safe
