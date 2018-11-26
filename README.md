@@ -26,5 +26,8 @@ KERNEL
     The compiler has more room to optimize
 
 ## OpenMP  - Multi-threads
+```console
+nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -o ccm OpenMP_thrust.cu
+```
 
 ## Spark/MPI   -   Multi-nodes
