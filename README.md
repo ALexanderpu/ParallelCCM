@@ -5,7 +5,14 @@
  GPU is that they do not share the same memory as the CPU. In other words, a GPU does not have direct access to the host memory. The host memory is generally larger, but slower than the GPU memory. To use a GPU, data must therefore be transferred from the main program to the GPU through the PCI bus, which has a much lower bandwidth than either memories. This means that managing data transfer between the host and the GPU will be of paramount importance. Transferring the data and the code onto the device is called offloading
 
 ###  1. global sorting  - thrust sort_by_key
-performance benchmark:
+
+In order to compare with the performance of gpu, you have to close the debug mode and compile as follows:
+
+```console
+nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -o ccm OpenMP_thrust.cu
+```
+
+the performance benchmark:
 
 -- time_series length: 
 1000
@@ -37,8 +44,6 @@ KERNEL
     The compiler has more room to optimize
 
 ## OpenMP  - Multi-threads
-```console
-nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -o ccm OpenMP_thrust.cu
-```
+
 
 ## Spark/MPI   -   Multi-nodes
