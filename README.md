@@ -52,3 +52,5 @@ KERNEL
 
 
 ## Spark/MPI   -   Multi-nodes
+
+Mitigating Bottlenecks of cluster computing:  reducing the response time for large L jobs as we have to wait until the last job done in multi nodes.
