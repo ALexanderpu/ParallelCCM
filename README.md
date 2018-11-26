@@ -15,6 +15,7 @@ nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -o ccm OpenMP_thrust.cu
 the performance benchmark:
 
 -- time_series length: 
+
 1000
 gpu sorting running time = 1.072339s
 cpu sorting running time = 0.534552s
