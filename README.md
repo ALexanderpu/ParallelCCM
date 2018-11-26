@@ -49,7 +49,50 @@ KERNEL
     The compiler has more room to optimize
 
 ## OpenMP  - Multi-threads
+shared memory threading:  communicating through shared variables
+use synchronization to protect data writing conflicts.  you have to wait writing then read
+(Synchronization is used to impose order constraints and to protect access to shared data)
 
+```cpp
+#include<omp.h>
+
+
+omp_lock_t lck;
+omp_init_lock(&lck);
+
+omp_set_num_threads(4);
+#pragma omp parallel for
+for(int sample = 0; sample < num_samples; sample++){
+  int ID = omp_get_thread_num();
+  
+  // Mutual exclusion: Only one thread at a time can enter a critical region.
+  #pragma omp critical
+  vec.push_back(sample);
+  
+  // Atomic provides mutual exclusion but only applies to the read/update of a memory location
+  #pragma omp atomic
+  x += tmp;
+  
+  // Single is executed by only one thread (differentiate from critical: one thread one time for all threads)
+  #pragma omp single
+  { exchange_boundaries(); }
+  
+  // lock is the low level of critical
+  omp_set_lock(&lck); //Wait here for your turn
+  printf(“%d %d”, id, tmp);
+  omp_unset_lock(&lck); //Release the lock so the next thread gets a turn
+}
+
+// reduction (op : list) .    The variables in “list” must be shared in the enclosing parallel region. 
+double ave=0.0, A[MAX]; int i;
+#pragma omp parallel for reduction (+:ave)
+for (i=0;i< MAX; i++) {
+   ave + = A[i];
+}
+ave = ave/MAX; 
+
+
+```
 
 ## Spark/MPI   -   Multi-nodes
 
