@@ -49,7 +49,7 @@ KERNEL
     The compiler has more room to optimize
 
 ## OpenMP  - Multi-threads
-shared memory threading:  communicating through shared variables
+OpenMP supports a shared memory threading:  communicating through shared variables; All threads share an address space, but it can get complicated: Consistency models based on orderings of Reads (R), Writes (W) and Synchronizations (S)
 use synchronization to protect data writing conflicts.  you have to wait writing then read
 (Synchronization is used to impose order constraints and to protect access to shared data)
 
@@ -59,11 +59,12 @@ use synchronization to protect data writing conflicts.  you have to wait writing
 
 omp_lock_t lck;
 omp_init_lock(&lck);
-
-omp_set_num_threads(4);
+size_t num_cpus = omp_num_procs();
+omp_set_num_threads(num_cpus);
 #pragma omp parallel for
 for(int sample = 0; sample < num_samples; sample++){
   int ID = omp_get_thread_num();
+  // data shareing: local variables inside parallel scope are automatically private;  global variables outside parallel scope are automatically shared
   
   // Mutual exclusion: Only one thread at a time can enter a critical region.
   #pragma omp critical
