@@ -6,8 +6,15 @@ Because GPU programming is an art, and it can be very, very challenging to get i
 
 Task parallel: The first one refers, roughly speaking, to problems where several threads are working on their own tasks (not exact the same but more or less independently). 
 
-Data parallel: The second one refers to problems where many threads are all doing the same - but on different parts of the data.
+Data parallel: The second one refers to problems where many threads are all doing the same - but on different parts of the data (GPU are good at: They have many cores, and all the cores do the same, but operate on different parts of the input data)
 
+GPUs are ridiculously fast in terms of theoretical computational power (FLOPS, Floating Point Operations Per Second). But they are often throttled down by the memory bandwidth  (Namely whether problems are memory bound or compute bound)
+
+Memory bound: Vector Additions have to read two data elements, then perform a single addition, and then write the sum into the result vector. You will not see a speedup when doing this on the GPU, because the single addition does not compensate for the efforts of reading/writing the memory
+
+Compute bound:refers to problems where the number of instructions is high compared to the number of memory reads/writes. For example, consider a matrix multiplication: The number of instructions will be O(n^3) when n is the size of the matrix. In this case, one can expect that the GPU will outperform a CPU at a **certain matrix size**
+
+On the GPU, you may encounter challenges on a much lower level: Occupancy, register pressure, shared memory pressure, memory coalescing
 
 
  GPU is that they do not share the same memory as the CPU. In other words, a GPU does not have direct access to the host memory. The host memory is generally larger, but slower than the GPU memory. To use a GPU, data must therefore be transferred from the main program to the GPU through the PCI bus, which has a much lower bandwidth than either memories. This means that managing data transfer between the host and the GPU will be of paramount importance. Transferring the data and the code onto the device is called offloading
