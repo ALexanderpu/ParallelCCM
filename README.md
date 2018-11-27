@@ -2,6 +2,14 @@
 
 ## CUDAC++ - GPU accelerate
 
+Because GPU programming is an art, and it can be very, very challenging to get it right. On the other hand, because GPUs are well-suited only for certain kinds of computations (matrix or algebra problems).
+
+Task parallel: The first one refers, roughly speaking, to problems where several threads are working on their own tasks (not exact the same but more or less independently). 
+
+Data parallel: The second one refers to problems where many threads are all doing the same - but on different parts of the data.
+
+
+
  GPU is that they do not share the same memory as the CPU. In other words, a GPU does not have direct access to the host memory. The host memory is generally larger, but slower than the GPU memory. To use a GPU, data must therefore be transferred from the main program to the GPU through the PCI bus, which has a much lower bandwidth than either memories. This means that managing data transfer between the host and the GPU will be of paramount importance. Transferring the data and the code onto the device is called offloading
 
 ###  1. global sorting  - thrust sort_by_key
@@ -99,3 +107,13 @@ ave = ave/MAX;
 
 Mitigating Bottlenecks of cluster computing:  reducing the response time for large L jobs as we have to wait until the last job done in multi nodes.
 How to:  build once and query multiple times for nearest neighbors finding
+
+The central issue here is the overhead involved in internode communication
+### MPI installation
+
+implementation: MPICH2
+
+### Compile with cuda code
+```console
+nvcc -I/usr/mpi/gcc/openmpi-1.4.6/include -L/usr/mpi/gcc/openmpi-1.4.6/lib64 -lmpi spaghetti.cu -o program
+```
