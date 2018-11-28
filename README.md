@@ -112,6 +112,8 @@ ave = ave/MAX;
 
 ## Spark/MPI   -   Multi-nodes
 
+MPI is used only for inter-node parallelism, while OpenMP threads control intra-node parallelism
+
 Mitigating Bottlenecks of cluster computing:  reducing the response time for large L jobs as we have to wait until the last job done in multi nodes.
 How to:  build once and query multiple times for nearest neighbors finding
 
@@ -182,3 +184,12 @@ mpirun -np 4 ./hellow
 ```console
 nvcc -I/usr/mpi/gcc/openmpi-1.4.6/include -L/usr/mpi/gcc/openmpi-1.4.6/lib64 -lmpi spaghetti.cu -o program
 ```
+option for mpirun: 
+
+-pernode, --pernode
+On each node, launch one process -- equivalent to -npernode 1. (deprecated in favor of --map-by ppr:1:node)
+
+-H, -host, --host <host1,host2,...,hostN>
+List of hosts on which to invoke processes.
+-hostfile, --hostfile <hostfile>
+Provide a hostfile to use.
