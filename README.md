@@ -157,7 +157,7 @@ MPI_Bcast(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm commu
 the root process and receiver processes do different jobs, they all call the same MPI_Bcast function. When the root process (in our example, it was process zero) calls MPI_Bcast, the data variable will be sent to all other processes. When all of the receiver processes call MPI_Bcast, the data variable will be filled in with the data from the root process.
 [images1]: https://www.dropbox.com/s/saminbnq6k6uxxx/Screenshot%202018-11-27%2019.05.33.png?dl=0
 
-[images1]
+![images1]
 ### MPI installation
 
 implementation: MPICH2
