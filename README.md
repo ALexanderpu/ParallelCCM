@@ -153,11 +153,20 @@ MPI_Barrier(MPI_Comm communicator)
 
 MPI_Bcast(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm communicator)
 
+**broadcast the time series data**
+
 -- A broadcast is one of the standard collective communication techniques. During a broadcast, one process sends the same data to all processes in a communicator. One of the main uses of broadcasting is to send out user input to a parallel program, or send out configuration parameters to all processes.
 the root process and receiver processes do different jobs, they all call the same MPI_Bcast function. When the root process (in our example, it was process zero) calls MPI_Bcast, the data variable will be sent to all other processes. When all of the receiver processes call MPI_Bcast, the data variable will be filled in with the data from the root process.
 
+MPI_Scatter(void* send_data, int send_count, MPI_Datatype send_datatype, void* recv_data, int recv_count, MPI_Datatype recv_datatype, int root,MPI_Comm communicator)
 
-![images1](https://github.com/ALexanderpu/CCM-Parralization/blob/master/Screenshot%202018-11-27%2019.05.33.png){:height="36px" width="36px"}
+**scatter the parameter combinations**
+
+MPI_Gather(void* send_data, int send_count, MPI_Datatype send_datatype, void* recv_data, int recv_count, MPI_Datatype recv_datatype, int root, MPI_Comm communicator)
+
+**gater the rhos results for different parameter**
+
+![images1](https://github.com/ALexanderpu/CCM-Parralization/blob/master/Screenshot%202018-11-27%2019.05.33.png)
 
 ### MPI installation
 
