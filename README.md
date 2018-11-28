@@ -115,12 +115,60 @@ ave = ave/MAX;
 Mitigating Bottlenecks of cluster computing:  reducing the response time for large L jobs as we have to wait until the last job done in multi nodes.
 How to:  build once and query multiple times for nearest neighbors finding
 
-The central issue here is the overhead involved in internode communication
+The central issue here is the overhead involved in internode communication:
+
+Point-to-Point communication
+
+MPI_Send(void* data, int count, MPI_Datatype datatype, int destination, int tag, MPI_Comm communicator)
+
+MPI_Recv(void* data, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm communicator, MPI_Status* status)
+
+The first argument is the data buffer. The second and third arguments describe the count and type of elements that reside in the buffer. The fourth and fifth arguments specify the rank of the sending/receiving process and the tag of the message. The sixth argument specifies the communicator and the last argument (for MPI_Recv only) provides information about the received message.
+
+```cpp
+// Find out rank, size
+int world_rank;
+MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+int world_size;
+MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+int number;
+if (world_rank == 0) {
+    number = -1;
+    MPI_Send(&number, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
+} else if (world_rank == 1) {
+    MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,
+             MPI_STATUS_IGNORE);
+    printf("Process 1 received number %d from process 0\n",
+           number);
+}
+```
+
+Collective communication is that it implies a synchronization point among processes:
+
+MPI_Barrier(MPI_Comm communicator) 
+
+-- MPI has a special function that is dedicated to synchronizing processer, the function forms a barrier, and no processes in the communicator can pass the barrier until all of them call the function.
+
+
+MPI_Bcast(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm communicator)
+
+-- A broadcast is one of the standard collective communication techniques. During a broadcast, one process sends the same data to all processes in a communicator. One of the main uses of broadcasting is to send out user input to a parallel program, or send out configuration parameters to all processes.
+the root process and receiver processes do different jobs, they all call the same MPI_Bcast function. When the root process (in our example, it was process zero) calls MPI_Bcast, the data variable will be sent to all other processes. When all of the receiver processes call MPI_Bcast, the data variable will be filled in with the data from the root process.
+[images1]: https://www.dropbox.com/s/saminbnq6k6uxxx/Screenshot%202018-11-27%2019.05.33.png?dl=0
+
+[images1]
 ### MPI installation
 
 implementation: MPICH2
 
 ### Compile with cuda code
+```console
+mpicc -o hellow hellow.c
+mpirun -np 4 ./hellow
+```
+
+
 ```console
 nvcc -I/usr/mpi/gcc/openmpi-1.4.6/include -L/usr/mpi/gcc/openmpi-1.4.6/lib64 -lmpi spaghetti.cu -o program
 ```
