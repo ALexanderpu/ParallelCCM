@@ -12,21 +12,19 @@
 #include <iomanip>
 using namespace std;
 
-// #define DSIZE 1000;
+static float min_weight = 0.000001;
 
-static const double min_weight = 0.000001;
+const float qnan = std::numeric_limits<float>::quiet_NaN();
 
-const double qnan = std::numeric_limits<double>::quiet_NaN();
-
-pair<vector<double>, vector<double> > parse_csv(std::string &csvfile){
+pair<vector<float>, vector<float> > parse_csv(std::string &csvfile){
     std::ifstream data(csvfile);
     std::string line;
-    std::vector<std::vector<double> > csvdata;
+    std::vector<std::vector<float> > csvdata;
     unsigned long length = 0;
     while(getline(data, line)){
         std::stringstream lineStream(line);
         std::string cell;
-        std::vector<double> parsedRow;
+        std::vector<float> parsedRow;
         while(getline(lineStream,cell,',')) //include head
         {
             parsedRow.push_back(strtof(cell.c_str(), 0));
@@ -34,8 +32,8 @@ pair<vector<double>, vector<double> > parse_csv(std::string &csvfile){
         length += 1;
         csvdata.push_back(parsedRow);
     }
-    vector<double> x, y;
-    cout << length << " size "<< endl;
+    vector<float> x, y;
+    cout << length-1 << " size "<< endl;
     for(int i = 1; i < length; i++){
         x.push_back(csvdata[i][1]);
         y.push_back(csvdata[i][2]);
@@ -43,9 +41,23 @@ pair<vector<double>, vector<double> > parse_csv(std::string &csvfile){
     return make_pair(x, y);
 }
 
+// write down the result to testify & compare plot accuracy
+void dump_csv(std::string &csvfile, size_t E, size_t tau, unordered_map<size_t, vector<float>>& rho_bins){
+	std::ofstream resultfile;
+	resultfile.open(csvfile);
+	std::string header = "E, tau, L, rho\n";
+	resultfile << header;
+	for(auto it = rho_bins.begin(); it != rho_bins.end(); it++){
+		for(size_t r = 0; r < it->second.size(); r++){
+			resultfile << E << ", " << tau << ", " << it->first << ", " << it->second[r] << endl;
+		}
+	}
+	resultfile.close();
+}
 
-double dist_func(const std::vector<double>& A, const std::vector<double>& B){
-    double dist = 0;
+
+float dist_func(const std::vector<float>& A, const std::vector<float>& B){
+    float dist = 0;
     for (auto a_iter = A.begin(), b_iter = B.begin(); a_iter != A.end(); ++a_iter, ++b_iter)
         dist += (*a_iter - *b_iter) * (*a_iter - *b_iter);
 
@@ -102,9 +114,9 @@ int main(int argc, char *argv[])
     */
 
     // access the matrix
-    vector<double > observations;
-    vector<double > targets;
-    string csvfile = "/home/bo/Documents/CCM-Parralization/TestCSVData/test_float_10000.csv";
+    vector<float > observations;
+    vector<float > targets;
+    string csvfile = "/home/bo/Documents/CCM-Parralization/TestCSVData/test_float_1000.csv";
     std::tie(observations, targets) = parse_csv(csvfile);
     //observations = {3, 4, 5, 6, 7, 1, 2, 5, 2};
     //targets = {7, 5, 8, 1, 3, 4, 3, 2, 1};
@@ -126,16 +138,31 @@ int main(int argc, char *argv[])
     	return 1;
     }
     size_t num_vectors = observations.size();
-    int num_samples = 250;
+    int num_samples = 50;
     size_t E = 3;
     size_t tau = 1;
-    size_t lib_size = min((size_t)300, num_vectors);
-    bool enable_cpus = true;
-    bool enable_global_sort = true;
-    bool enable_gpu = true;
-    bool replacement = true;
+    size_t lib_size = min((size_t)700, num_vectors);
 
-    vector<vector<double>> lag_vector(num_vectors, vector<double>(E, qnan));
+    // build a balance kd tree: sort for each dimension  O(dnlogn)  then maintain a priority queue (maxheap) to keep k
+    // this one cannot handle tie and lets see how the output perform
+    // hidden problem: the high dimension d but few points (time series)
+    // divide and conquer: when lib_size > num_vectors/2   we should work on inclusive method,   when lib_size < num_vectors/2 we should work on exclusive method
+
+    bool enable_global_sort = false;
+    if(lib_size > num_vectors/2){
+    	enable_global_sort = true;
+    }
+
+    // valid only when enable global sort
+    bool enable_gpu = false;
+    if(enable_global_sort && num_vectors > 4000){
+    	enable_gpu = true;
+    }
+
+    bool replacement = true;
+    bool enable_cpus = true;
+
+    vector<vector<float> > lag_vector(num_vectors, vector<float>(E, qnan));
     // make lag vector
     for (size_t i = 0; i < (E - 1) * tau; ++i)
            for (size_t j = 0; j < E; ++j)
@@ -177,7 +204,7 @@ int main(int argc, char *argv[])
 
     // compute distance matrix using lag_vector  N*E  (contain nan)
     cout << "calculate the distance matrix: " << endl;
-    vector<vector<double> > distance_matrix(num_vectors, vector<double>(num_vectors,  std::numeric_limits<double>::max()));
+    vector<vector<float> > distance_matrix(num_vectors, vector<float>(num_vectors,  std::numeric_limits<float>::max()));
     for(auto& cur_pred: which_pred){
     	for(auto& cur_lib: which_lib){
     		distance_matrix[cur_pred][cur_lib] = dist_func(lag_vector[cur_pred], lag_vector[cur_lib]);
@@ -200,13 +227,20 @@ int main(int argc, char *argv[])
     // test rank_matrix here
     vector<vector<size_t> > rank_matrix;
     if(enable_global_sort){
+    	for(int i = 0; i < num_vectors; i++){
+    		vector<size_t> temp;
+    		for(int j = 0; j < num_vectors; j++){
+    			temp.push_back(0);
+    		}
+    		rank_matrix.push_back(temp);
 
-    	rank_matrix(num_vectors, vector<size_t>(num_vectors, 0));
+    	}
+
 		if(enable_gpu){
 			gettimeofday(&t1,NULL);
 			// gpu sort here
 			for(auto& cur_pred: which_pred){
-				thrust::device_vector<double> values_gpu(distance_matrix[cur_pred]);
+				thrust::device_vector<float> values_gpu(distance_matrix[cur_pred]);
 				thrust::device_vector<size_t> indices_gpu(distance_matrix[cur_pred].size());
 				thrust::sequence(indices_gpu.begin(), indices_gpu.end());
 				thrust::sort_by_key(values_gpu.begin(), values_gpu.end(), indices_gpu.begin()); // this function will change values and indices at the same time
@@ -221,7 +255,7 @@ int main(int argc, char *argv[])
 		//if(enable_gpu){
 			gettimeofday(&t1,NULL);
 			for(auto& cur_pred: which_pred){
-				vector<double>& values_cpu = distance_matrix[cur_pred];
+				vector<float>& values_cpu = distance_matrix[cur_pred];
 				vector<size_t> indices_cpu(values_cpu.size());
 				size_t n = 0;
 				std::generate(indices_cpu.begin(), indices_cpu.end(), [&n]{return n++;});
@@ -264,8 +298,9 @@ int main(int argc, char *argv[])
 	}else{
 		omp_set_num_threads(1);
 	}
+
 	// final result
-	vector<double > rhos;
+	vector<float > rhos;
 
     #pragma omp parallel for
 	for(size_t sample = 0; sample < num_samples; sample++){
@@ -273,15 +308,15 @@ int main(int argc, char *argv[])
 		// cout << "initialize data for thread id: " << cpu_thread_id << " process: " << sample<< endl;
 
 		// sample l size of observation index
-		vector<size_t> lib_contain_indices;
+		vector<size_t> sample_lib;
 
 		if(replacement){
 			// sample with replacement (default)
 			for(auto l = 0; l < lib_size; l++)
-				lib_contain_indices.push_back(which_lib[lib_sampler(rng)]);
+				sample_lib.push_back(which_lib[lib_sampler(rng)]);
 		}else{
 			// sample without replacement   (refer from the algorithm from Knuth)
-			lib_contain_indices.assign(lib_size, 0);
+			sample_lib.assign(lib_size, 0);
 			size_t m = 0;
 			size_t t= 0;
 			while(m < lib_size){
@@ -289,101 +324,144 @@ int main(int argc, char *argv[])
 					++t;
 				}
 				else{
-					lib_contain_indices[m] = which_lib[t];
+					sample_lib[m] = which_lib[t];
 					++t; ++m;
 				}
 			}
 		}
-		// find nearest neighbor here?
 
-
-		// initialize predicted
-		vector<double> predicted(num_vectors, qnan);
 		// simplex prediction to compute predicted
 		size_t cur_pred_index, num_ties;
-		std::vector<double > weights;
-		for(size_t k = 0; k < which_pred.size(); k++){
-			cur_pred_index = which_pred[k];
 
-			vector<size_t> lib;
-			// TODO: filter the index itself
-			std::copy_if(lib_contain_indices.begin(), lib_contain_indices.end(), back_inserter(lib), [&cur_pred_index](size_t i){return i != cur_pred_index;});
-			// cout << lib.size() << endl;
+		std::vector<float > weights;
+		// initialize predicted
+		vector<float> predicted(num_vectors, qnan);
 
-			if(!enable_global_sort){
-				//find nearest neighbors without global sorted table here: distance_matrix[cur_pred_index]
+		if(enable_global_sort){
+			//find nearest neighbors with global sorted table (rank_matrix[cur_pred_index]) when lib size is large
+
+			vector<int> dict(num_vectors, 0);
+			for(auto l: sample_lib){
+				dict[l] += 1;
+			}
+
+			for(size_t k = 0; k < which_pred.size(); k++){
+				cur_pred_index = which_pred[k];
+				// using rank matrix to find neighbors
+				vector<size_t > neighbors;
+
+				for(auto neighbor_index: rank_matrix[cur_pred_index]){
+					if(cur_pred_index == neighbor_index){
+						// filter index itself
+						continue;
+					}
+					if((neighbors.size() >= E+1) || (distance_matrix[cur_pred_index][neighbor_index] == std::numeric_limits<float>::max())){
+						break;
+					}
+					if(dict[neighbor_index] > 0){
+						// may contain repeated elements
+						for(int ele = 0; ele < dict[neighbor_index]; ele++){
+							neighbors.push_back(neighbor_index);
+						}
+					}
+				}
+				// not necessary to handle tie here
+				float min_distance = distance_matrix[cur_pred_index][neighbors[0]];
+				size_t num_neighbors = min(E+1, neighbors.size());
+				weights.assign(num_neighbors, min_weight);
+				for(size_t t = 0; t < num_neighbors; t++){
+					if(distance_matrix[cur_pred_index][neighbors[t]] == 0){
+						// cout << "this is special case "<< endl;
+						weights[t] = 1;
+					}else if(min_distance != 0){
+						weights[t] = std::fmax(exp(-distance_matrix[cur_pred_index][neighbors[t]] / min_distance), min_weight);
+					}
+				}
+
+				// make prediction
+				float total_weight = accumulate(weights.begin(), weights.end(), 0.0);
+				predicted[cur_pred_index] = 0;
+				for(size_t t = 0; t < num_neighbors; t++){
+					predicted[cur_pred_index] += weights[t] * targets[neighbors[t]];
+				}
+				// normalized
+				predicted[cur_pred_index] = predicted[cur_pred_index] / total_weight;
+			}
+		}else{
+			//find nearest neighbors with local sorted table here: distance_matrix[cur_pred_index]
+			for(size_t k = 0; k < which_pred.size(); k++){
+				cur_pred_index = which_pred[k];
+				// find nearest neighbors
 				std::vector<size_t> neighbors;
-				const vector<double>& distances = distance_matrix[cur_pred_index];
-				std::sort(lib.begin(), lib.end(), [&distances](size_t i1, size_t i2){return distances[i1] < distances[i2];});
-			}else{
-				//find nearest neighbors with global sorted table
-				// when lib size is large
+				// TODO: filter the index itself
+				std::copy_if(sample_lib.begin(), sample_lib.end(), back_inserter(neighbors), [&cur_pred_index](size_t i){return i != cur_pred_index;});
+				// cout << lib.size() << endl;
 
+				const vector<float>& distances = distance_matrix[cur_pred_index];
 
-			}
+				std::sort(neighbors.begin(), neighbors.end(), [&distances](size_t i1, size_t i2){return distances[i1] < distances[i2];});
 
-
-			// identify tie
-			size_t tie_index = min(lib.size()-1, E);
-			double tie_distance = distance_matrix[cur_pred_index][lib[tie_index]];
-			size_t cur_tie_index = tie_index;
-			for(; cur_tie_index < lib.size(); cur_tie_index++){
-				if(distance_matrix[cur_pred_index][lib[cur_tie_index]] > tie_distance){
-					cur_tie_index -= 1; // is the previous one
-					break;
+				// identify tie
+				size_t tie_index = min(neighbors.size()-1, E);
+				float tie_distance = distance_matrix[cur_pred_index][neighbors[tie_index]];
+				size_t cur_tie_index = tie_index;
+				for(; cur_tie_index < neighbors.size(); cur_tie_index++){
+					if(distance_matrix[cur_pred_index][neighbors[cur_tie_index]] > tie_distance){
+						cur_tie_index -= 1; // is the previous one
+						break;
+					}
 				}
-			}
-			// 0 - cur_tie_index   in lib   is the neighbor index range
-
-			double min_distance = distance_matrix[cur_pred_index][lib[0]];
-			weights.assign(cur_tie_index+1, min_weight);
-			for(size_t i = 0; i < cur_tie_index; i++){
-				if(distance_matrix[cur_pred_index][lib[i]] == 0){
-					cout << "this is special case "<< endl;
-					weights[i] = 1;
-				}else if(min_distance != 0){
-					weights[i] = fmax(exp(-distance_matrix[cur_pred_index][lib[i]] / min_distance), min_weight);
+				// 0 - cur_tie_index   in neighbors   is the k nearest neighbor index range
+				float min_distance = distance_matrix[cur_pred_index][neighbors[0]];
+				weights.assign(cur_tie_index+1, min_weight);
+				for(size_t t = 0; t < cur_tie_index; t++){
+					if(distance_matrix[cur_pred_index][neighbors[t]] == 0){
+						// cout << "this is special case "<< endl;
+						weights[t] = 1;
+					}else if(min_distance != 0){
+						weights[t] = std::fmax(exp(-distance_matrix[cur_pred_index][neighbors[t]] / min_distance), min_weight);
+					}
 				}
-			}
 
-			// identify tie exist and adjust weights
-			if(cur_tie_index > tie_index){
-				num_ties = 0;
-				int left_tie = tie_index-1;
-				while(left_tie >= 0 && distance_matrix[cur_pred_index][lib[left_tie]] == tie_distance){
-					left_tie--;
-					num_ties++;
-				}
-				int right_tie = tie_index+1;
-				while(right_tie <= cur_tie_index && distance_matrix[cur_pred_index][lib[right_tie]] == tie_distance){
-					right_tie--;
-					num_ties++;
-				}
-				double tie_adj_factor = double(num_ties  - cur_tie_index + tie_index) / double(num_ties);
+				// identify tie exist and adjust weights
+				if(cur_tie_index > tie_index){
+					num_ties = 0;
+					int left_tie = tie_index-1;
+					while(left_tie >= 0 && distance_matrix[cur_pred_index][neighbors[left_tie]] == tie_distance){
+						left_tie--;
+						num_ties++;
+					}
+					int right_tie = tie_index+1;
+					while(right_tie <= cur_tie_index && distance_matrix[cur_pred_index][neighbors[right_tie]] == tie_distance){
+						right_tie++;
+						num_ties++;
+					}
+					float tie_adj_factor = float(num_ties  - cur_tie_index + tie_index) / float(num_ties);
 
+					for(size_t t = 0; t <= cur_tie_index; t++){
+						if(distance_matrix[cur_pred_index][neighbors[t]] == tie_distance)
+							weights[t] *= tie_adj_factor;
+					}
+				}
+				// make prediction
+				float total_weight = accumulate(weights.begin(), weights.end(), 0.0);
+				predicted[cur_pred_index] = 0;
 				for(size_t t = 0; t <= cur_tie_index; t++){
-					if(distance_matrix[cur_pred_index][lib[t]] == tie_distance)
-						weights[t] *= tie_adj_factor;
+					predicted[cur_pred_index] += weights[t] * targets[neighbors[t]];
 				}
+				// normalized
+				predicted[cur_pred_index] = predicted[cur_pred_index] / total_weight;
 			}
-
-			// make prediction
-			double total_weight = accumulate(weights.begin(), weights.end(), 0.0);
-			predicted[cur_pred_index] = 0;
-			for(size_t t = 0; t <= cur_tie_index; t++){
-				predicted[cur_pred_index] += weights[t] * targets[lib[t]];
-			}
-			// normalized
-			predicted[cur_pred_index] = predicted[cur_pred_index] / total_weight;
 		}
 
-		// compute rho for every sample between predicted and targets
+		// compute rho for every sample between predicted and targets array
+		// this part can use gpu acceleration: two vectors operation -> a number
 		size_t num_pred = 0;
-		double sum_tar = 0;
-		double sum_pred = 0;
-		double sum_squared_tar = 0;
-		double sum_squared_pred = 0;
-		double sum_prod = 0;
+		float sum_tar = 0;
+		float sum_pred = 0;
+		float sum_squared_tar = 0;
+		float sum_squared_pred = 0;
+		float sum_prod = 0;
 		if(targets.size() == predicted.size()){
 			for(size_t k = 0; k < targets.size(); k++){
 				if(!std::isnan(predicted[k]) && !std::isnan(targets[k])){
@@ -396,9 +474,9 @@ int main(int argc, char *argv[])
 				}
 			}
 		}
-		double rho = 0;
-		double denominator = sqrt((sum_squared_tar * num_pred - sum_tar * sum_tar) * (sum_squared_pred * num_pred - sum_pred * sum_pred));
-		double numerator = (sum_prod * num_pred - sum_tar * sum_pred);
+		float rho = 0;
+		float denominator = sqrt((sum_squared_tar * num_pred - sum_tar * sum_tar) * (sum_squared_pred * num_pred - sum_pred * sum_pred));
+		float numerator = (sum_prod * num_pred - sum_tar * sum_pred);
 		if(denominator != 0)
 			rho = numerator / denominator;
 
@@ -406,40 +484,50 @@ int main(int argc, char *argv[])
 		rhos.push_back(rho);
 	 }
 
+	gettimeofday(&t2,NULL);
+	unsigned long et2 = ((t2.tv_sec * 1000000)+t2.tv_usec) - ((t1.tv_sec * 1000000) + t1.tv_usec);
+	printf("stage 2 runing time = %fs\n", (float)et2/(float)(1000000));
+	printf("total runing time = %fs\n", (float)(et1+et2)/(float)(1000000));
 
+	// how to dump rhos for given parameters: E, tau, lib_size, num_samples, time_series   ?
 
+	string output = "output_E_" + to_string(E) + "_tau_" + to_string(tau) + "_numsamples_" + to_string(num_samples) + ".csv";
+	unordered_map<size_t, vector<float>> rho_bins;
+	rho_bins[lib_size] = rhos;
+	dump_csv(output, E, tau, rho_bins);
 
-        /*
-        thrust::host_vector<int> data(DSIZE);
-        thrust::generate(data.begin(), data.end(), rand);
-
-        // copy data
-        // critical part: should enter into task
-        for (unsigned int i = 0; i < num_gpus; i++) {
-            cudaSetDevice(i);
-            thrust::copy(data.begin(), data.end(), (*(dvecs[i])).begin());
-          }
-
-        printf("start sort\n");
-
-
-        cudaSetDevice(cpu_thread_id);
-        thrust::sort((*(dvecs[cpu_thread_id])).begin(), (*(dvecs[cpu_thread_id])).end());
-        cudaDeviceSynchronize();
-		*/
-
+	/*
 	cout << " the result size: " << rhos.size() << endl;
 	for(size_t i = 0; i < rhos.size(); i++){
 		cout << rhos[i] << " ";
 	}
 	cout << endl;
+	*/
 
-    gettimeofday(&t2,NULL);
-    unsigned long et2 = ((t2.tv_sec * 1000000)+t2.tv_usec) - ((t1.tv_sec * 1000000) + t1.tv_usec);
-    printf("stage 2 runing time = %fs\n", (float)et2/(float)(1000000));
+    printf("Success\n");
+    return 0;
 
 
-    printf("total runing time = %fs\n", (float)(et1+et2)/(float)(1000000));
+
+	/*
+	thrust::host_vector<int> data(DSIZE);
+	thrust::generate(data.begin(), data.end(), rand);
+
+	// copy data
+	// critical part: should enter into task
+	for (unsigned int i = 0; i < num_gpus; i++) {
+		cudaSetDevice(i);
+		thrust::copy(data.begin(), data.end(), (*(dvecs[i])).begin());
+	  }
+
+	printf("start sort\n");
+
+
+	cudaSetDevice(cpu_thread_id);
+	thrust::sort((*(dvecs[cpu_thread_id])).begin(), (*(dvecs[cpu_thread_id])).end());
+	cudaDeviceSynchronize();
+	*/
+
 
     /*
     unsigned long et = ((t2.tv_sec * 1000000)+t2.tv_usec) - ((t1.tv_sec * 1000000) + t1.tv_usec);
@@ -456,6 +544,4 @@ int main(int argc, char *argv[])
           if (data[j] != result[j]) { printf("mismatch on device %d at index %d, host: %d, device: %d\n", i, j, data[j], result[j]); return 1;}
     }
     */
-    printf("Success\n");
-    return 0;
 }
