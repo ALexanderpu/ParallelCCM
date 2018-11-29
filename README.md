@@ -176,16 +176,21 @@ implementation: MPICH2
 
 ### Compile with cuda code
 ```console
+# compile under c standard
 mpicc -o hellow hellow.c
+
+# compile using g++
+g++ -I/home/bo/Desktop/mpich-3.3/src/include -L/home/bo/Desktop/mpich-3.3/lib test.cxx -lmpicxx -lmpi -o ccm
+
+# compile with cuda and openmp c++
+nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -I/home/bo/Desktop/mpich-3.3/src/include -L/home/bo/Desktop/mpich-3.3/lib test.cu -lmpicxx -lmpi -o ccmwithcuda
+```
+
+### Run using mpirun after compilation
+option for mpirun: 
+```console
 mpirun -np 4 ./hellow
 ```
-
-
-```console
-nvcc -I/usr/mpi/gcc/openmpi-1.4.6/include -L/usr/mpi/gcc/openmpi-1.4.6/lib64 -lmpi spaghetti.cu -o program
-```
-option for mpirun: 
-
 -pernode, --pernode
 On each node, launch one process -- equivalent to -npernode 1. (deprecated in favor of --map-by ppr:1:node)
 
