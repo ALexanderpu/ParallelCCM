@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+class ConfigReader
+{
+	private:
+		std::unordered_map<record> records;
+
+	public:
+        struct record
+        {
+            std::string section;
+            std::string name;
+            std::string value;
+        };
+
+        ConfigReader();
+
+        explicit ConfigReader (const std::string & file){
+        	readfile (file);
+        }
+
+        bool readfile (const std::string & file){
+
+        }
+
+        std::string get_string (const std::string & tsection,
+        const std::string & tname, std::string tdefault = std::string());
+
+};
