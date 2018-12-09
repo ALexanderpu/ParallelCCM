@@ -1,0 +1,16 @@
+18:05:11 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+
+18:05:20 Build Finished (took 8s.752ms)
+

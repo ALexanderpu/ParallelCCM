@@ -1,0 +1,245 @@
+16:46:29 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -G -g -O0 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -G -g -O0 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp:7:8: error: ‘unordered_map’ in namespace ‘std’ does not name a template type
+   std::unordered_map<string, unordered_map<string, string>> records;
+        ^
+../config.cpp: In member function ‘std::__cxx11::string& ConfigReader::trim(std::__cxx11::string&)’:
+../config.cpp:20:12: error: ‘is_whitespace’ does not name a type
+       auto is_whitespace = [] (char c) -> bool { return c == ' ' || c == '\t'; };
+            ^
+../config.cpp:21:9: error: ‘first_non_whitespace’ does not name a type
+    auto first_non_whitespace = std::find_if_not(s.begin(), s.end(), is_whitespace);
+         ^
+../config.cpp:22:19: error: ‘begin’ was not declared in this scope
+    s.erase(begin(s), first_non_whitespace);
+                   ^
+../config.cpp:22:22: error: ‘first_non_whitespace’ was not declared in this scope
+    s.erase(begin(s), first_non_whitespace);
+                      ^
+../config.cpp:23:9: error: ‘last_non_whitespace’ does not name a type
+    auto last_non_whitespace = std::find_if_not(s.rbegin(), s.rend(), is_whitespace).base();
+         ^
+../config.cpp:24:17: error: ‘last_non_whitespace’ was not declared in this scope
+    s.erase(next(last_non_whitespace), end(s));
+                 ^
+../config.cpp:24:36: error: ‘next’ was not declared in this scope
+    s.erase(next(last_non_whitespace), end(s));
+                                    ^
+../config.cpp:24:44: error: ‘end’ was not declared in this scope
+    s.erase(next(last_non_whitespace), end(s));
+                                            ^
+../config.cpp: In member function ‘std::__cxx11::string& ConfigReader::normalize(std::__cxx11::string&)’:
+../config.cpp:29:37: error: ‘begin’ was not declared in this scope
+       s.erase(std::remove_if(begin(s), end(s),[] (char c) { return c == ' ' || c == '\t'; }), end(s));
+                                     ^
+../config.cpp:29:45: error: ‘end’ was not declared in this scope
+       s.erase(std::remove_if(begin(s), end(s),[] (char c) { return c == ' ' || c == '\t'; }), end(s));
+                                             ^
+../config.cpp:29:91: warning: lambda expressions only available with -std=c++11 or -std=gnu++11
+       s.erase(std::remove_if(begin(s), end(s),[] (char c) { return c == ' ' || c == '\t'; }), end(s));
+                                                                                           ^
+../config.cpp: In member function ‘void ConfigReader::parse(std::__cxx11::string&, std::__cxx11::string&)’:
+../config.cpp:77:5: error: ‘records’ was not declared in this scope
+     records[sec][name] = value;
+     ^
+../config.cpp: In constructor ‘ConfigReader::ConfigReader(const string&)’:
+../config.cpp:85:24: error: ‘readfile’ was not declared in this scope
+          readfile (file);
+                        ^
+subdir.mk:18: recipe for target 'config.o' failed
+../config.cpp: In member function ‘bool ConfigReader::read_file(const string&)’:
+../config.cpp:95:2: error: ‘records’ was not declared in this scope
+  records.clear();
+  ^
+../config.cpp:96:27: error: no matching function for call to ‘std::basic_ifstream<char>::basic_ifstream(const string&)’
+  std::ifstream config(file);
+                           ^
+In file included from /usr/include/x86_64-linux-gnu/c++/5/bits/stdc++.h:69:0,
+                 from ../config.cpp:1:
+/usr/include/c++/5/fstream:495:7: note: candidate: std::basic_ifstream<_CharT, _Traits>::basic_ifstream(const char*, std::ios_base::openmode) [with _CharT = char; _Traits = std::char_traits<char>; std::ios_base::openmode = std::_Ios_Openmode]
+       basic_ifstream(const char* __s, ios_base::openmode __mode = ios_base::in)
+       ^
+/usr/include/c++/5/fstream:495:7: note:   no known conversion for argument 1 from ‘const string {aka const std::__cxx11::basic_string<char>}’ to ‘const char*’
+/usr/include/c++/5/fstream:481:7: note: candidate: std::basic_ifstream<_CharT, _Traits>::basic_ifstream() [with _CharT = char; _Traits = std::char_traits<char>]
+       basic_ifstream() : __istream_type(), _M_filebuf()
+       ^
+/usr/include/c++/5/fstream:481:7: note:   candidate expects 0 arguments, 1 provided
+/usr/include/c++/5/fstream:455:11: note: candidate: std::basic_ifstream<char>::basic_ifstream(const std::basic_ifstream<char>&)
+     class basic_ifstream : public basic_istream<_CharT, _Traits>
+           ^
+/usr/include/c++/5/fstream:455:11: note:   no known conversion for argument 1 from ‘const string {aka const std::__cxx11::basic_string<char>}’ to ‘const std::basic_ifstream<char>&’
+../config.cpp: In function ‘std::__cxx11::string get_string(const string&, const string&)’:
+../config.cpp:113:9: error: ‘records’ was not declared in this scope
+  return records[tsection][tname];
+         ^
+../config.cpp: In function ‘int main(int, char**)’:
+../config.cpp:123:5: error: ‘class ConfigReader’ has no member named ‘readfile’
+  cr.readfile(file);
+     ^
+make: *** [config.o] Error 1
+16:49:18 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp: In constructor ‘ConfigReader::ConfigReader(const string&)’:
+../config.cpp:85:24: error: ‘readfile’ was not declared in this scope
+          readfile (file);
+                        ^
+../config.cpp: In function ‘std::__cxx11::string get_string(const string&, const string&)’:
+../config.cpp:113:9: error: ‘records’ was not declared in this scope
+  return records[tsection][tname];
+         ^
+../config.cpp: In function ‘int main(int, char**)’:
+../config.cpp:123:5: error: ‘class ConfigReader’ has no member named ‘readfile’
+  cr.readfile(file);
+     ^
+subdir.mk:18: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+16:49:57 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp: In function ‘int main(int, char**)’:
+../config.cpp:123:5: error: ‘class ConfigReader’ has no member named ‘readfile’
+  cr.readfile(file);
+     ^
+make: *** [config.o] Error 1
+subdir.mk:18: recipe for target 'config.o' failed
+16:50:16 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+./config.o: In function `main':
+config.cpp:(.text+0x267): undefined reference to `ConfigReader::ConfigReader()'
+makefile:58: recipe for target 'OpenMPThrust' failed
+collect2: error: ld returned 1 exit status
+make: *** [OpenMPThrust] Error 1
+16:51:45 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+16:51:53 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+make: Nothing to be done for 'all'.
+16:53:00 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+17:19:17 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp: In function ‘int main(int, char**)’:
+../config.cpp:139:18: error: invalid use of member function (did you forget the ‘()’ ?)
+   if(Ess.peek == ',')
+                  ^
+../config.cpp:144:20: error: invalid use of member function (did you forget the ‘()’ ?)
+   if(tauss.peek == ',')
+                    ^
+../config.cpp:167:2: error: expected ‘;’ before ‘for’
+  for(auto ele: tauArr){
+  ^
+make: *** [config.o] Error 1
+subdir.mk:18: recipe for target 'config.o' failed
+17:19:29 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp: In function ‘int main(int, char**)’:
+../config.cpp:139:18: error: invalid use of member function (did you forget the ‘()’ ?)
+   if(Ess.peek == ',')
+                  ^
+../config.cpp:144:20: error: invalid use of member function (did you forget the ‘()’ ?)
+   if(tauss.peek == ',')
+                    ^
+subdir.mk:18: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+17:20:18 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+17:21:16 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+17:23:00 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+18:05:11 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+Finished building: ../config.cpp
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
+Finished building target: OpenMPThrust
+ 
