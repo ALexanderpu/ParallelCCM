@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+using namespace std;
+class ConfigReader
+{
+	private:
+		// section is the
+		std::vector<record> records;
+
+		// check only if ' '; '\t'; '\n'; '\f'; '\r' exist
+		// usually it is to split words in the sentence
+		bool space_only(const string& line){
+			for(size_t i = 0; i < line.length();i++){
+				if(std::isspace(line[i]))
+					return false;
+			}
+			return true;
+		}
+		// erase the leading space and trailing space
+		std::string& trim(std::string& s){
+			auto first_non_whitespace = std::find_if_not(s.begin(), s.end(), isspace);
+			s.erase(begin(s), first_non_whitespace);
+			auto last_non_whitespace = std::find_if_not(s.rbegin(), s.rend(), isspace);
+
+			s.erase(next(last_non_whitespace), end(s));
+			return s;
+		}
+
+	public:
+        struct record
+        {
+            std::string section;
+            std::string name;
+            std::string value;
+        };
+
+        ConfigReader();
+
+        explicit ConfigReader (const std::string & file){
+        	readfile (file);
+        }
+
+        bool read_file (const std::string& file);
+
+        std::string get_string (const std::string & tsection, const std::string & tname, std::string tdefault = std::string());
+
+};
+
+bool ConfigReader::readfile(const std::string& file){
+	records.clear();
+	std::ifstream config(file);
+	if(!config.is_open())
+		return false;
+	std::string section;
+	std::string buffer;
+
+	while(std::getline(config, buffer, '\n')){
+
+	}
+
+}
+
+
+
+int main(int argc, char **argv){
+	string file = "/home/bo/cloud/CCM-Parralization/ccm.cfg";
+	ConfigReader cr;
+	cr.readfile(file);
+	string section2 = "parameters";
+	string input = cr.get_string("paths", "input");
+	string output = cr.get_string("paths", "output");
+	string E = cr.get_string("parameters", "E");
+	string tau = cr.get_string("parameters", "tau");
+
+	string num_samples = cr.get_string("parameters", "num_samples");
+
+	string LStart = cr.get_string("parameters", "LStart");
+	string LEnd = cr.get_string("parameters", "LEnd");
+	string LInterval = cr.get_string("parameters", "LInterval");
+
+
+	cout << input << endl;
+	return 0;
+
+}
