@@ -243,3 +243,449 @@ Invoking: NVCC Linker
 /usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o   -lgomp
 Finished building target: OpenMPThrust
  
+14:59:14 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp: In function ‘std::vector<std::vector<long unsigned int> > rank_matrix_gpu(std::vector<std::vector<float> >&, std::vector<long unsigned int>)’:
+../config.cpp:15:9: error: ‘sequence’ is not a member of ‘thrust’
+         thrust::sequence(indices_gpu.begin(), indices_gpu.end());
+         ^
+In file included from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:27:0,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:26,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/for_each.h:279,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.inl:19,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.h:105,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/transform.inl:25,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/transform.h:724,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/copy.inl:23,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/copy.h:58,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/copy.inl:21,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/copy.h:90,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/copy_construct_range.inl:21,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/copy_construct_range.h:46,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.inl:22,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.h:161,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.h:29,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/host_vector.h:26,
+                 from ../config.cpp:2:
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘void thrust::system::detail::generic::stable_sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:147:28:   required from ‘void thrust::stable_sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sort.inl:93:29:   required from ‘void thrust::system::detail::generic::sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:115:21:   required from ‘void thrust::sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sort.inl:77:22:   required from ‘void thrust::system::detail::generic::sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:98:21:   required from ‘void thrust::sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:285:29:   required from ‘void thrust::sort_by_key(RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+../config.cpp:16:86:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘InputIterator thrust::system::detail::generic::for_each_n(thrust::execution_policy<Derived>&, InputIterator, Size, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; UnaryFunction = thrust::detail::device_generate_functor<thrust::detail::fill_functor<long unsigned int> >]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:71:20:   required from ‘InputIterator thrust::for_each_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, InputIterator, Size, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; UnaryFunction = thrust::detail::device_generate_functor<thrust::detail::fill_functor<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/generate.inl:54:28:   required from ‘OutputIterator thrust::system::detail::generic::generate_n(thrust::execution_policy<Derived>&, OutputIterator, Size, Generator) [with ExecutionPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; Generator = thrust::detail::fill_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/generate.inl:60:20:   required from ‘OutputIterator thrust::generate_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, OutputIterator, Size, Generator) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; Generator = thrust::detail::fill_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/fill.h:41:28:   required from ‘OutputIterator thrust::system::detail::generic::fill_n(thrust::execution_policy<Derived>&, OutputIterator, Size, const T&) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; T = long unsigned int]’
+subdir.mk:18: recipe for target 'config.o' failed
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/fill.inl:54:16:   required from ‘OutputIterator thrust::fill_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, OutputIterator, Size, const T&) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/uninitialized_fill.inl:74:24:   [ skipping 4 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/default_construct_range.inl:105:58:   required from ‘void thrust::detail::default_construct_range(Allocator&, Pointer, Size) [with Allocator = thrust::device_malloc_allocator<long unsigned int>; Pointer = thrust::device_ptr<long unsigned int>; Size = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.inl:212:26:   required from ‘void thrust::detail::contiguous_storage<T, Alloc>::default_construct_n(thrust::detail::contiguous_storage<T, Alloc>::iterator, thrust::detail::contiguous_storage<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::contiguous_storage<T, Alloc>::iterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; typename thrust::detail::allocator_traits<Alloc>::pointer = thrust::device_ptr<long unsigned int>; thrust::detail::contiguous_storage<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.inl:173:5:   required from ‘void thrust::detail::vector_base<T, Alloc>::default_init(thrust::detail::vector_base<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::vector_base<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.inl:56:15:   required from ‘thrust::detail::vector_base<T, Alloc>::vector_base(thrust::detail::vector_base<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::vector_base<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/device_vector.h:86:16:   required from ‘thrust::device_vector<T, Alloc>::device_vector(thrust::device_vector<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::device_vector<T, Alloc>::size_type = long unsigned int]’
+../config.cpp:14:83:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+make: *** [config.o] Error 1
+15:01:01 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+../config.cpp: In function ‘std::vector<std::vector<long unsigned int> > rank_matrix_gpu(std::vector<std::vector<float> >&, std::vector<long unsigned int>)’:
+../config.cpp:15:9: error: ‘sequence’ is not a member of ‘thrust’
+         thrust::sequence(indices_gpu.begin(), indices_gpu.end());
+         ^
+In file included from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:27:0,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:26,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/for_each.h:279,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.inl:19,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.h:105,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/transform.inl:25,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/transform.h:724,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/copy.inl:23,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/copy.h:58,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/copy.inl:21,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/copy.h:90,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/copy_construct_range.inl:21,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/copy_construct_range.h:46,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.inl:22,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.h:161,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.h:29,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/host_vector.h:26,
+                 from ../config.cpp:2:
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘void thrust::system::detail::generic::stable_sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:147:28:   required from ‘void thrust::stable_sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sort.inl:93:29:   required from ‘void thrust::system::detail::generic::sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:115:21:   required from ‘void thrust::sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sort.inl:77:22:   required from ‘void thrust::system::detail::generic::sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:98:21:   required from ‘void thrust::sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:285:29:   required from ‘void thrust::sort_by_key(RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+../config.cpp:16:86:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘InputIterator thrust::system::detail::generic::for_each_n(thrust::execution_policy<Derived>&, InputIterator, Size, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; UnaryFunction = thrust::detail::device_generate_functor<thrust::detail::fill_functor<long unsigned int> >]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:71:20:   required from ‘InputIterator thrust::for_each_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, InputIterator, Size, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; UnaryFunction = thrust::detail::device_generate_functor<thrust::detail::fill_functor<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/generate.inl:54:28:   required from ‘OutputIterator thrust::system::detail::generic::generate_n(thrust::execution_policy<Derived>&, OutputIterator, Size, Generator) [with ExecutionPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; Generator = thrust::detail::fill_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/generate.inl:60:20:   required from ‘OutputIterator thrust::generate_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, OutputIterator, Size, Generator) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; Generator = thrust::detail::fill_functor<long unsigned int>]’
+subdir.mk:25: recipe for target 'config.o' failed
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/fill.h:41:28:   required from ‘OutputIterator thrust::system::detail::generic::fill_n(thrust::execution_policy<Derived>&, OutputIterator, Size, const T&) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/fill.inl:54:16:   required from ‘OutputIterator thrust::fill_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, OutputIterator, Size, const T&) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/uninitialized_fill.inl:74:24:   [ skipping 4 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/default_construct_range.inl:105:58:   required from ‘void thrust::detail::default_construct_range(Allocator&, Pointer, Size) [with Allocator = thrust::device_malloc_allocator<long unsigned int>; Pointer = thrust::device_ptr<long unsigned int>; Size = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.inl:212:26:   required from ‘void thrust::detail::contiguous_storage<T, Alloc>::default_construct_n(thrust::detail::contiguous_storage<T, Alloc>::iterator, thrust::detail::contiguous_storage<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::contiguous_storage<T, Alloc>::iterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; typename thrust::detail::allocator_traits<Alloc>::pointer = thrust::device_ptr<long unsigned int>; thrust::detail::contiguous_storage<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.inl:173:5:   required from ‘void thrust::detail::vector_base<T, Alloc>::default_init(thrust::detail::vector_base<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::vector_base<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.inl:56:15:   required from ‘thrust::detail::vector_base<T, Alloc>::vector_base(thrust::detail::vector_base<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::vector_base<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/device_vector.h:86:16:   required from ‘thrust::device_vector<T, Alloc>::device_vector(thrust::device_vector<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::device_vector<T, Alloc>::size_type = long unsigned int]’
+../config.cpp:14:83:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+make: *** [config.o] Error 1
+15:01:12 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+subdir.mk:25: recipe for target 'config.o' failed
+make: *** [config.o] Terminated
+Command canceled
+15:02:33 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cpp"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile  -x c++ -o  "config.o" "../config.cpp"
+In file included from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:27:0,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:26,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/for_each.h:279,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.inl:19,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.h:105,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/transform.inl:25,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/transform.h:724,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/copy.inl:23,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/copy.h:58,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/copy.inl:21,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/copy.h:90,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/copy_construct_range.inl:21,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/copy_construct_range.h:46,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.inl:22,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.h:161,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.h:29,
+                 from /usr/local/cuda-10.0/bin/..//include/thrust/host_vector.h:26,
+                 from ../config.cpp:2:
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘void thrust::system::detail::generic::stable_sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:147:28:   required from ‘void thrust::stable_sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sort.inl:93:29:   required from ‘void thrust::system::detail::generic::sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:115:21:   required from ‘void thrust::sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2, StrictWeakOrdering) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; StrictWeakOrdering = thrust::less<float>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sort.inl:77:22:   required from ‘void thrust::system::detail::generic::sort_by_key(thrust::execution_policy<Derived>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:98:21:   required from ‘void thrust::sort_by_key(const thrust::detail::execution_policy_base<DerivedPolicy>&, RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with DerivedPolicy = thrust::cuda_cub::tag; RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sort.inl:285:29:   required from ‘void thrust::sort_by_key(RandomAccessIterator1, RandomAccessIterator1, RandomAccessIterator2) [with RandomAccessIterator1 = thrust::detail::normal_iterator<thrust::device_ptr<float> >; RandomAccessIterator2 = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+../config.cpp:16:86:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘InputIterator thrust::system::detail::generic::for_each(thrust::execution_policy<Derived>&, InputIterator, InputIterator, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::zip_iterator<thrust::tuple<thrust::counting_iterator<long int, thrust::use_default, thrust::use_default, long int>, thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type> >; UnaryFunction = thrust::detail::unary_transform_functor<thrust::system::detail::generic::sequence_detail::sequence_functor<long unsigned int> >]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:44:18:   required from ‘InputIterator thrust::for_each(const thrust::detail::execution_policy_base<DerivedPolicy>&, InputIterator, InputIterator, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::zip_iterator<thrust::tuple<thrust::counting_iterator<long int, thrust::use_default, thrust::use_default, long int>, thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type, thrust::null_type> >; UnaryFunction = thrust::detail::unary_transform_functor<thrust::system::detail::generic::sequence_detail::sequence_functor<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/transform.inl:54:21:   required from ‘OutputIterator thrust::system::detail::generic::transform(thrust::execution_policy<Derived>&, InputIterator, InputIterator, OutputIterator, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::counting_iterator<long int, thrust::use_default, thrust::use_default, long int>; OutputIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; UnaryFunction = thrust::system::detail::generic::sequence_detail::sequence_functor<long unsigned int>]’
+subdir.mk:25: recipe for target 'config.o' failed
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/transform.inl:44:19:   required from ‘OutputIterator thrust::transform(const thrust::detail::execution_policy_base<DerivedPolicy>&, InputIterator, InputIterator, OutputIterator, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::counting_iterator<long int, thrust::use_default, thrust::use_default, long int>; OutputIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; UnaryFunction = thrust::system::detail::generic::sequence_detail::sequence_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/tabulate.inl:51:20:   required from ‘void thrust::system::detail::generic::tabulate(thrust::execution_policy<Derived>&, ForwardIterator, ForwardIterator, UnaryOperation) [with DerivedPolicy = thrust::cuda_cub::tag; ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; UnaryOperation = thrust::system::detail::generic::sequence_detail::sequence_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/tabulate.inl:37:18:   required from ‘void thrust::tabulate(const thrust::detail::execution_policy_base<DerivedPolicy>&, ForwardIterator, ForwardIterator, UnaryOperation) [with DerivedPolicy = thrust::cuda_cub::tag; ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; UnaryOperation = thrust::system::detail::generic::sequence_detail::sequence_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sequence.inl:88:19:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sequence.inl:75:19:   required from ‘void thrust::system::detail::generic::sequence(thrust::execution_policy<Derived>&, ForwardIterator, ForwardIterator, T) [with DerivedPolicy = thrust::cuda_cub::tag; ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sequence.inl:54:18:   required from ‘void thrust::sequence(const thrust::detail::execution_policy_base<DerivedPolicy>&, ForwardIterator, ForwardIterator, T) [with DerivedPolicy = thrust::cuda_cub::tag; ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/sequence.inl:64:19:   required from ‘void thrust::system::detail::generic::sequence(thrust::execution_policy<Derived>&, ForwardIterator, ForwardIterator) [with DerivedPolicy = thrust::cuda_cub::tag; ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sequence.inl:41:18:   required from ‘void thrust::sequence(const thrust::detail::execution_policy_base<DerivedPolicy>&, ForwardIterator, ForwardIterator) [with DerivedPolicy = thrust::cuda_cub::tag; ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/sequence.inl:82:26:   required from ‘void thrust::sequence(ForwardIterator, ForwardIterator) [with ForwardIterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >]’
+../config.cpp:15:64:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h: In instantiation of ‘InputIterator thrust::system::detail::generic::for_each_n(thrust::execution_policy<Derived>&, InputIterator, Size, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; UnaryFunction = thrust::detail::device_generate_functor<thrust::detail::fill_functor<long unsigned int> >]’:
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/for_each.inl:71:20:   required from ‘InputIterator thrust::for_each_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, InputIterator, Size, UnaryFunction) [with DerivedPolicy = thrust::cuda_cub::tag; InputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; UnaryFunction = thrust::detail::device_generate_functor<thrust::detail::fill_functor<long unsigned int> >]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/generate.inl:54:28:   required from ‘OutputIterator thrust::system::detail::generic::generate_n(thrust::execution_policy<Derived>&, OutputIterator, Size, Generator) [with ExecutionPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; Generator = thrust::detail::fill_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/generate.inl:60:20:   required from ‘OutputIterator thrust::generate_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, OutputIterator, Size, Generator) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; Generator = thrust::detail::fill_functor<long unsigned int>]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/fill.h:41:28:   required from ‘OutputIterator thrust::system::detail::generic::fill_n(thrust::execution_policy<Derived>&, OutputIterator, Size, const T&) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/fill.inl:54:16:   required from ‘OutputIterator thrust::fill_n(const thrust::detail::execution_policy_base<DerivedPolicy>&, OutputIterator, Size, const T&) [with DerivedPolicy = thrust::cuda_cub::tag; OutputIterator = thrust::device_ptr<long unsigned int>; Size = long unsigned int; T = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/uninitialized_fill.inl:74:24:   [ skipping 4 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/allocator/default_construct_range.inl:105:58:   required from ‘void thrust::detail::default_construct_range(Allocator&, Pointer, Size) [with Allocator = thrust::device_malloc_allocator<long unsigned int>; Pointer = thrust::device_ptr<long unsigned int>; Size = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/contiguous_storage.inl:212:26:   required from ‘void thrust::detail::contiguous_storage<T, Alloc>::default_construct_n(thrust::detail::contiguous_storage<T, Alloc>::iterator, thrust::detail::contiguous_storage<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::contiguous_storage<T, Alloc>::iterator = thrust::detail::normal_iterator<thrust::device_ptr<long unsigned int> >; typename thrust::detail::allocator_traits<Alloc>::pointer = thrust::device_ptr<long unsigned int>; thrust::detail::contiguous_storage<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.inl:173:5:   required from ‘void thrust::detail::vector_base<T, Alloc>::default_init(thrust::detail::vector_base<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::vector_base<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/vector_base.inl:56:15:   required from ‘thrust::detail::vector_base<T, Alloc>::vector_base(thrust::detail::vector_base<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::detail::vector_base<T, Alloc>::size_type = long unsigned int]’
+/usr/local/cuda-10.0/bin/..//include/thrust/device_vector.h:86:16:   required from ‘thrust::device_vector<T, Alloc>::device_vector(thrust::device_vector<T, Alloc>::size_type) [with T = long unsigned int; Alloc = thrust::device_malloc_allocator<long unsigned int>; thrust::device_vector<T, Alloc>::size_type = long unsigned int]’
+../config.cpp:14:83:   required from here
+/usr/local/cuda-10.0/bin/..//include/thrust/detail/static_assert.h:71:13: error: invalid application of ‘sizeof’ to incomplete type ‘thrust::detail::STATIC_ASSERTION_FAILURE<false>’
+       sizeof(::thrust::detail::STATIC_ASSERTION_FAILURE< (bool)( B ) >)>\
+             ^
+/usr/local/cuda-10.0/bin/..//include/thrust/system/detail/generic/for_each.h:49:3: note: in expansion of macro ‘THRUST_STATIC_ASSERT’
+   THRUST_STATIC_ASSERT( (thrust::detail::depend_on_instantiation<InputIterator, false>::value) );
+   ^
+make: *** [config.o] Error 1
+15:04:03 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building file: ../gpu_sort.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "gpu_sort.d" "../gpu_sort.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "gpu_sort.o" "../gpu_sort.cu"
+Finished building: ../gpu_sort.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+./gpu_sort.o: In function `dist_func(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)':
+tmpxft_000052b3_00000000-5_gpu_sort.cudafe1.cpp:(.text+0x16): multiple definition of `dist_func(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)'
+makefile:58: recipe for target 'OpenMPThrust' failed
+./config.o:tmpxft_0000522c_00000000-5_config.cudafe1.cpp:(.text+0x16): first defined here
+./gpu_sort.o: In function `rank_matrix_gpu(std::vector<std::vector<float, std::allocator<float> >, std::allocator<std::vector<float, std::allocator<float> > > >&, std::vector<unsigned long, std::allocator<unsigned long> >)':
+tmpxft_000052b3_00000000-5_gpu_sort.cudafe1.cpp:(.text+0x3eb): multiple definition of `rank_matrix_gpu(std::vector<std::vector<float, std::allocator<float> >, std::allocator<std::vector<float, std::allocator<float> > > >&, std::vector<unsigned long, std::allocator<unsigned long> >)'
+./config.o:tmpxft_0000522c_00000000-5_config.cudafe1.cpp:(.text+0x3eb): first defined here
+collect2: error: ld returned 1 exit status
+make: *** [OpenMPThrust] Error 1
+15:08:09 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../config.cu(10): error: expected a ";"
+
+../config.cu(11): error: identifier "result" is undefined
+
+2 errors detected in the compilation of "/tmp/tmpxft_0000587a_00000000-6_config.cpp1.ii".
+subdir.mk:21: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+15:08:17 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+
+Compilation terminated.
+make: *** [config.o] Terminated
+subdir.mk:21: recipe for target 'config.o' failed
+Command canceled
+15:08:55 **** Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+./gpu_sort.o: In function `dist_func(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)':
+tmpxft_000052b3_00000000-5_gpu_sort.cudafe1.cpp:(.text+0x16): multiple definition of `dist_func(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)'
+makefile:58: recipe for target 'OpenMPThrust' failed
+./config.o:tmpxft_000059fe_00000000-5_config.cudafe1.cpp:(.text+0x16): first defined here
+collect2: error: ld returned 1 exit status
+make: *** [OpenMPThrust] Error 1
+15:11:43 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building file: ../gpu_sort.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "gpu_sort.d" "../gpu_sort.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "gpu_sort.o" "../gpu_sort.cu"
+Finished building: ../gpu_sort.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+15:12:26 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+make: Nothing to be done for 'all'.
+15:12:42 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+15:13:50 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+15:14:08 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+make: Nothing to be done for 'all'.
+15:41:27 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+../config.cu:3:22: fatal error: config.hpp: No such file or directory
+compilation terminated.
+subdir.mk:21: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+15:42:23 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+15:43:35 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+15:45:26 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+17:24:50 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../config.cu(12): error: identifier "num_samples" is undefined
+
+../config.cu(13): error: identifier "output" is undefined
+
+2 errors detected in the compilation of "/tmp/tmpxft_00001153_00000000-6_config.cpp1.ii".
+subdir.mk:21: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+17:25:13 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../config.cu(13): error: identifier "num_samples" is undefined
+
+../config.cu(14): error: identifier "output" is undefined
+
+2 errors detected in the compilation of "/tmp/tmpxft_0000124f_00000000-6_config.cpp1.ii".
+subdir.mk:21: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+17:26:04 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../config.cu(14): error: identifier "output" is undefined
+
+../config.cu(15): error: expected a ";"
+
+../config.cu(16): error: identifier "output_file" is undefined
+
+../config.cu(12): warning: variable "num_samples" was declared but never referenced
+
+3 errors detected in the compilation of "/tmp/tmpxft_000013d8_00000000-6_config.cpp1.ii".
+subdir.mk:21: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+17:26:12 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../config.cu(14): error: identifier "output" is undefined
+
+1 error detected in the compilation of "/tmp/tmpxft_00001489_00000000-6_config.cpp1.ii".
+make: *** [config.o] Error 1
+subdir.mk:21: recipe for target 'config.o' failed
+17:26:20 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 

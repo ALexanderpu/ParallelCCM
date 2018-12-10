@@ -1,0 +1,12 @@
+#include "global.h"
+
+using namespace std;
+int main(int argc, char *argv[]){
+	vector<vector<float>> distances;
+	distances.push_back({1,2,3});
+	distances.push_back({2,3,4});
+	distances.push_back({4,5,6});
+	rank_matrix_gpu(distance);
+	std::cout << "asd" << std::endl;
+	return 0;
+}
