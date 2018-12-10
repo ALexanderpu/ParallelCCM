@@ -1,0 +1,10 @@
+#include "global.h"
+
+using namespace std;
+int main(int argc, char *argv[]){
+	vector<vector<float>> distances;
+	dostamces.push_back({1,2,3});
+	rank_matrix_gpu()
+	std::cout << "asd" << std::endl;
+	return 0;
+}

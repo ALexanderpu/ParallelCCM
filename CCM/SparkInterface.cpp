@@ -6,7 +6,7 @@
  * @desc spark c script interface
 */
 #include "include/json.hpp"
-#include <bits/stdc++.h>
+#include "include/ccm.hpp"
 using json = nlohmann::json;
 
 using namespace std;
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
         }
         // parse str to get the parameters and input time_series
         size_t lib_size, tau, e, samples;
-        vector<double> observation, target;
+        vector<float> observations, targets;
         json j;
         try{
             j = json::parse(str);
@@ -27,11 +27,11 @@ int main(int argc, char *argv[]){
             cout << "error: parse input json string" << endl;
             return 0;
         }
-        for(auto &ele: j["observation"]){
-            observation.emplace_back(ele);
+        for(auto &ele: j["observations"]){
+            observations.emplace_back(ele);
         }
-        for(auto &ele:j["target"]){
-            target.emplace_back(ele);
+        for(auto &ele:j["targets"]){
+            targets.emplace_back(ele);
         }
         e = (size_t)j["e"];
         lib_size = (size_t)j["l"];
@@ -39,7 +39,11 @@ int main(int argc, char *argv[]){
         samples = (size_t)j["samples"];
         // for testing input
         // cout << "ttreceived, e: " << e << " tau:" << tau << " l: " << lib_size << " samples:" << samples << endl;
+        
         // run ccm algorithm
+        
+        // return all values
+        vector<float> result = ccm(observations, targets, e, tau, lib_size, samples);
         
         // return average
         /*
@@ -51,9 +55,12 @@ int main(int argc, char *argv[]){
         cout << average << endl;
         */
         // return whole result
-        vector<double> result = {1, 2, 3, 4, 5, 6};
         json jresult;
+        jresult["e"] = e;
+        jresult["tau"] = tau;
+        jresult["l"] = lib_size;
         jresult["result"] = result;
+
         string resultJson = jresult.dump();
         cout << resultJson << endl;
     }

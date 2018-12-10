@@ -1,0 +1,11 @@
+#include "global.h"
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
+#include <thrust/sort.h>
+#include <thrust/copy.h>
+#include <thrust/sequence.h>
+
+int main(int argc, char *argv[]){
+	std::cout << "asd" << std::endl;
+	return 0;
+}
