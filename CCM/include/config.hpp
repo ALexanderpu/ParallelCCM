@@ -1,3 +1,10 @@
+/**
+ * @author Bo Pu
+ * @email pubo.alexander@gmail.com
+ * @create date 2018-08-27 07:26:45
+ * @modify date 2018-08-27 07:26:45
+ * @desc class to parse config file (.ini) at the beginning of CCM Parallel Algorithm
+*/
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
@@ -6,7 +13,7 @@
 class ConfigReader
 {
 	private:
-		// section, name, value
+		// data sturcture to store contents in config file (section, name, value)
 		std::unordered_map<std::string, std::unordered_map<std::string, std::string> > records;
 
 		// check only if ' '; '\t'; '\n'; '\f'; '\r' exist
@@ -18,6 +25,7 @@ class ConfigReader
 			}
 			return true;
 		}
+	
 		// erase the leading space and trailing space
 		std::string& trim(std::string& s){
 		    auto is_whitespace = [] (char c) -> bool { return c == ' ' || c == '\t'; };
@@ -27,12 +35,14 @@ class ConfigReader
 			s.erase(next(last_non_whitespace), end(s));
 			return s;
 		}
+	
 		// erase the middle space
 		std::string& normalize(std::string& s) {
 		    s.erase(std::remove_if(begin(s), end(s),[] (char c) { return c == ' ' || c == '\t'; }), end(s));
 		    return s;
 		}
-
+	
+		// validate the line: if it is ilegal, skip; else we take the settings and store in records
 		bool is_valid (std::string & line){
 			line = trim(line);
 		    line = normalize(line);
@@ -84,11 +94,14 @@ class ConfigReader
 	public:
 
         ConfigReader(){};
-
+	
+	// init with file (call rea_file to parse)
         explicit ConfigReader (const std::string & file){  read_file (file); }
-
+	
+	// read and parsing at the same time
         bool read_file (const std::string& file);
-
+	
+	// query config settings
         std::string get_string (const std::string & tsection, const std::string & tname);
 
 };
