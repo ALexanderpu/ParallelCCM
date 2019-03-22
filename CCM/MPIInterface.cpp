@@ -5,12 +5,6 @@
 
 using namespace std;
 
-struct IncGenerator {
-    int current_, interval_;
-    IncGenerator (int start, int interval) : current_(start),interval_(interval) {}
-    int operator() () { return current_ += interval_; }
-};
-
 int main(int argc, char **argv){
     string file = "/home/bo/cloud/CCM-Parralization/ccm.cfg";
     ConfigReader cr;
@@ -120,6 +114,13 @@ int main(int argc, char **argv){
     MPI_Bcast(&num_tasks, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&elements_per_proc, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+     // initial the result array
+    float *finalResult[num_tasks];
+    for(int i = 0; i < num_tasks; i++){
+        finalResult[i] = (float *) malloc(num_samples * sizeof(float));
+    }
+
+
 
     if(my_id != 0){
         observations.resize(num_vectors); 
@@ -132,21 +133,77 @@ int main(int argc, char **argv){
     MPI_Bcast(&observations[0], observations.size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&targets[0], targets.size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
     
-    MPI_Bcast(&combinationEArr[0], combinationEArr.size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&combinationEArr[0], combinationEArr.size(), MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&combinationtauArr[0], combinationtauArr.size(), MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&combinationLArr[0], combinationLArr.size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&combinationLArr[0], combinationLArr.size(), MPI_INT, 0, MPI_COMM_WORLD);
 
     // call ccm here
     int start_index = my_id*elements_per_proc;
-    int end_index = start_index + elements_per_proc-1;
+    int end_index = start_index + elements_per_proc - 1;
 
     for(int i = start_index; i <= end_index; i++){
-        
-        vector<float> result = ccm(observations, targets, combinationEArr[i], combinationtauArr[i], combinationLArr[i], num_samples);
-        cout << "task " << i << " has the first result: " << result[0] << endl;
+        CCMParallel cp;
+        vector<float> result = cp.ccm(observations, targets, combinationEArr[i], combinationtauArr[i], combinationLArr[i], num_samples);
+        cout << "task " << i << " with id:  " << my_id << " has the first result: " << result[0] << " size is: " << result.size() << endl;
         // better to save result into csv here
+        std::string csvfile = output +  "/e_" + to_string(combinationEArr[i]) + "_tau_" + to_string(combinationtauArr[i]) + "_l_" + to_string(combinationLArr[i]) + "_MPIversion.csv";
+        dump_csv(csvfile, result, (size_t)combinationEArr[i], (size_t)combinationtauArr[i], (size_t)combinationLArr[i]);
+        //float* a = &result[0];
+        //MPI_Gather(a, num_samples, MPI_FLOAT, finalResult[i], num_samples, MPI_FLOAT, 0, MPI_COMM_WORLD);
     }
+    /*
+    if(my_id == 0){
+        for(int i = 0; i < num_tasks; i++){
+            cout << "task " << i << " has the first result: " << finalResult[i][0] << endl;
+        }
+    }
+    */
+    /*
+    if(my_id == 0){
+        // with the combinationE/tau/LArr  and finalResult
+        size_t prev_E = combinationEArr[0];
+        size_t prev_tau = combinationtauArr[0];
+        std::string csvfile = output +  "/e_" + to_string(prev_E) + "_tau_" + to_string(prev_tau) + "_MPIversion.csv";
+        std::unordered_map<size_t, std::vector<float> > rho_bins;
+        int l_sizes = 0;
+        for(int i = 0; i < num_tasks; i++){
+            size_t cur_E = combinationEArr[i];
+            size_t cur_tau = combinationtauArr[i];
+            size_t cur_L = combinationLArr[i];
+            
+            if(cur_E == prev_E && cur_tau == prev_tau){
+                // add finalResult into rho_bins;
+                vector<float> rho(finalResult[i], finalResult[i] + num_samples);
+                rho_bins[cur_L] = rho;
+                l_sizes++;
+
+            }else{
+                dump_csv_multiLs(csvfile, rho_bins, prev_E, prev_tau);
+                // start a new
+                prev_E = cur_E;
+                prev_tau = cur_tau;
+                csvfile = output +  "/e_" + to_string(prev_E) + "_tau_" + to_string(prev_tau) + "_MPIversion.csv";
+                l_sizes = 1;
+                // clear rho_bins then add new
+                rho_bins.clear();
+                vector<float> rho(finalResult[i], finalResult[i] + num_samples);
+                rho_bins[cur_L] = rho;
+            }
+        }
+        if(l_sizes){
+            dump_csv_multiLs(csvfile, rho_bins, prev_E, prev_tau);
+        }
+        
+    }*/
     
+    // free up the 2 dimensions array: finalResult
+    /*
+    for(int i = 0; i < num_tasks; ++i) {
+        delete[] finalResult[i];   
+    }
+    //Free the array of pointers
+    delete[] finalResult;
+    */
     
     // finally gather the result
     MPI_Finalize();

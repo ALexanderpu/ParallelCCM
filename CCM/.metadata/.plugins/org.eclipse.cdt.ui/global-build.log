@@ -689,3 +689,116 @@ Invoking: NVCC Linker
 /usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
 Finished building target: OpenMPThrust
  
+20:15:59 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(327): warning: pointless comparison of unsigned integer with zero
+
+../ccm.hpp(190): warning: variable "num_ties" was declared but never referenced
+
+../config.cu(15): warning: variable "num_vectors" was set but never used
+
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(327): warning: pointless comparison of unsigned integer with zero
+
+Finished building: ../config.cu
+ 
+Building file: ../gpu_sort.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "gpu_sort.d" "../gpu_sort.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "gpu_sort.o" "../gpu_sort.cu"
+Finished building: ../gpu_sort.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+20:19:04 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(330): warning: pointless comparison of unsigned integer with zero
+
+../ccm.hpp(190): warning: variable "num_ties" was declared but never referenced
+
+../config.cu(54): error: identifier "num_vectors" is undefined
+
+1 error detected in the compilation of "/tmp/tmpxft_000077e0_00000000-6_config.cpp1.ii".
+subdir.mk:21: recipe for target 'config.o' failed
+make: *** [config.o] Error 1
+20:22:14 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(330): warning: pointless comparison of unsigned integer with zero
+
+../ccm.hpp(190): warning: variable "num_ties" was declared but never referenced
+
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(330): warning: pointless comparison of unsigned integer with zero
+
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+20:25:36 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(330): warning: pointless comparison of unsigned integer with zero
+
+../ccm.hpp(190): warning: variable "num_ties" was declared but never referenced
+
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(330): warning: pointless comparison of unsigned integer with zero
+
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 
+20:39:40 **** Incremental Build of configuration Debug for project OpenMPThrust ****
+make all 
+Building file: ../config.cu
+Invoking: NVCC Compiler
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 -gencode arch=compute_35,code=sm_35  -odir "." -M -o "config.d" "../config.cu"
+/usr/local/cuda-10.0/bin/nvcc -O0 -Xcompiler -fopenmp -std=c++11 --compile --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35  -x cu -o  "config.o" "../config.cu"
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+../ccm.hpp(190): warning: variable "num_ties" was declared but never referenced
+
+../ccm.hpp(118): warning: missing return statement at end of non-void function "CCMParallel::init"
+
+Finished building: ../config.cu
+ 
+Building target: OpenMPThrust
+Invoking: NVCC Linker
+/usr/local/cuda-10.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_35,code=compute_35 -gencode arch=compute_35,code=sm_35 -link -o  "OpenMPThrust"  ./config.o ./gpu_sort.o   -lgomp
+Finished building target: OpenMPThrust
+ 

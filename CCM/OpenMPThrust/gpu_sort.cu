@@ -1,3 +1,5 @@
+#ifndef GPU_SORT_CU
+#define GPU_SORT_CU
 #include "global.h"
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
@@ -19,4 +21,7 @@ std::vector<std::vector<size_t> > rank_matrix_gpu(std::vector<std::vector<float>
     }
     return rank_matrix;
 }
+
+
+#endif
 

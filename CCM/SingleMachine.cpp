@@ -5,29 +5,78 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // test accuracy and function of ccm
-    string cfgfile = "/home/bo/cloud/CCM-Parralization/ccm.cfg";
+    string file = "/home/bo/cloud/CCM-Parralization/ccm.cfg";
     ConfigReader cr;
-    cr.read_file(cfgfile);
+    int num_samples;
+    std::vector<int> EArr, tauArr, LArr;
+    string input, output;
+    vector<float > observations, targets;
+    int num_vectors;
+    try{
+        // parse config file: /home/bo/cloud/CCM-Parralization/ccm.cfg
+        cr.read_file(file);
 
-    
-    string input = cr.get_string("paths", "input");
-    string output = cr.get_string("paths", "output");
+        // read parameters and scatter to other processor
+        string E = cr.get_string("parameters", "E");
+        string tau = cr.get_string("parameters", "tau");
 
-    vector<float > observations;
-    vector<float > targets;
-    std::tie(observations, targets) = parse_csv(input);
-    if(observations.size() != targets.size()){
-    	cout << "input sequence length not match" << endl;
-    	return 1;
+        // parse to int vector for parameter: tau, E
+        std::stringstream Ess(E), tauss(tau);
+        int i;
+        while(Ess >> i){
+            EArr.push_back(i);
+            if(Ess.peek() == ',')
+                Ess.ignore();
+        }
+        while(tauss >> i){
+            tauArr.push_back(i);
+            if(tauss.peek() == ',')
+                tauss.ignore();
+        }
+
+        num_samples = stoi(cr.get_string("parameters", "num_samples"));
+
+        // parse to int for parameter: L
+        int LStart = stoi(cr.get_string("parameters", "LStart"));
+        int LEnd = stoi(cr.get_string("parameters", "LEnd"));
+        int LInterval = stoi(cr.get_string("parameters", "LInterval"));
+        size_t Lsize = (LEnd-LStart)/LInterval + 1;
+        
+        LArr.assign(Lsize, 0);
+        IncGenerator g (LStart-LInterval, LInterval);
+        std::generate(LArr.begin(), LArr.end(), g);
+
+        // read csv file for observations and targets to broadcast to other processor
+        string input = cr.get_string("paths", "input");
+        string output = cr.get_string("paths", "output");
+        
+        std::tie(observations, targets) = parse_csv(input);
+        num_vectors = observations.size();
+        size_t e = EArr[0];
+        size_t t = tauArr[0];
+        cout << "inputs: e " << e << " t " << t << " num_samples: " << num_samples << endl;
+        if(e > 0 && t > 0 && num_samples > 0 && LStart > 0 && LEnd > 0 && LInterval > 0 ){
+            unordered_map<size_t, vector<float> > rho_bins;
+            CCMParallel cp;
+            for(size_t lib_size = LStart; lib_size <= LEnd; lib_size += LInterval){
+                vector<float> result = cp.ccm(observations, targets, e, t, lib_size, num_samples);
+                rho_bins[lib_size] = result;
+            }
+            string output_file = "/e_" + to_string(e) + "_tau_" + to_string(t) + "_singlemachine.csv";
+            string output_path = output + output_file;
+            cout << "save data into file: " << output_path << endl;
+            dump_csv_multiLs(output_path, rho_bins, e, t);
+        }else{
+            cout << "the parameters of ccm is not correct" << endl;
+            return 1;
+        }
+    }catch(int e){
+        cout << "loading data and parameter error" <<endl;
+        return 1;
     }
-
-    size_t num_vectors = observations.size();
-    int num_samples = 250;
-    size_t E = 3;
-    size_t tau = 1;
-    size_t lib_size = min((size_t)700, num_vectors);
-    vector<float> result = ccm(observations, targets, E, tau, lib_size, num_samples);
-    string output_file = "/E_" + to_string((int)E) + "_tau_" + to_string((int)tau) + "_l_" + to_string((int)lib_size) + "_samples_" + to_string(num_samples) + ".csv";
-    string output_path = output + output_file;
-    dump_csv(output_path, result, E, tau, lib_size);
+    if(observations.size() != targets.size()){
+        cout << "input sequence length not match" << endl;
+        return 1;
+    }
+    return 0;
 }

@@ -10,6 +10,12 @@
 
 #include "global.h"
 
+struct IncGenerator {
+    int current_, interval_;
+    IncGenerator (int start, int interval) : current_(start),interval_(interval) {}
+    int operator() () { return current_ += interval_; }
+};
+
 class ConfigReader
 {
 	private:
