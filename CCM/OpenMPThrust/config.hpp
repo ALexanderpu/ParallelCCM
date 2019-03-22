@@ -1,4 +1,13 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
 #include "global.h"
+
+struct IncGenerator {
+    int current_, interval_;
+    IncGenerator (int start, int interval) : current_(start),interval_(interval) {}
+    int operator() () { return current_ += interval_; }
+};
 
 class ConfigReader
 {
@@ -20,7 +29,7 @@ class ConfigReader
 		    auto is_whitespace = [] (char c) -> bool { return c == ' ' || c == '\t'; };
 			auto first_non_whitespace = std::find_if_not(s.begin(), s.end(), is_whitespace);
 			s.erase(begin(s), first_non_whitespace);
-			auto last_non_whitespace = std::find_if_not(s.rbegin(), s.rend(), is_whitespace).base();
+			auto last_non_whitespace = prev(std::find_if_not(s.rbegin(), s.rend(), is_whitespace).base());
 			s.erase(next(last_non_whitespace), end(s));
 			return s;
 		}
@@ -31,8 +40,8 @@ class ConfigReader
 		}
 
 		bool is_valid (std::string & line){
-			trim(line);
-		    normalize (line);
+			line = trim(line);
+		    line = normalize(line);
 		    std::size_t i = 0;
 		    // if the line is a section
 		    if (line[i] == '[')
@@ -111,3 +120,6 @@ bool ConfigReader::read_file(const std::string& file){
 std::string ConfigReader::get_string (const std::string & tsection, const std::string & tname){
 	return records[tsection][tname];
 }
+
+
+#endif
