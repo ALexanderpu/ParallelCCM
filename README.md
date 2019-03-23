@@ -1,67 +1,83 @@
-# CCM Parallization Techniques
+# Applying Parallel Techniques on Convergent Cross Mapping (CCM)
+---
+## Overview
 
-## CUDAC++ - GPU accelerate
+This repository is the parallel version of R package `rEDM` function `ccm`, which was originally implemented by [ha0ye](https://github.com/ha0ye/rEDM) to infer the causality using time series. Different parallel techniques used in the code: GPU CUDA, Spark and MPI/OpenMP. Other similar computation-intensive algorithms which require parallelizing can also refer this repository. This implementation can improve the execution speed when trying an wide range of parameters: E, tau, lib_sizes. The output is csv file format and there is R script which can transfer the csv file into the density plots. By observing the pattern of these plots, we can infer the causality with confidence.
 
-Because GPU programming is an art, and it can be very, very challenging to get it right. On the other hand, because GPUs are well-suited only for certain kinds of computations (matrix or algebra problems).
+``` r
+install.packages("rEDM")
+data(sardine_anchovy_sst)
+anchovy_xmap_sst <- ccm(sardine_anchovy_sst, E = 3, lib_column = "anchovy", 
+    target_column = "np_sst", lib_sizes = seq(10, 80, by = 10), num_samples = 100, 
+    random_libs = TRUE, replace = TRUE)
+```
 
-Task parallel: The first one refers, roughly speaking, to problems where several threads are working on their own tasks (not exact the same but more or less independently). 
+## Project Layout
 
-Data parallel: The second one refers to problems where many threads are all doing the same - but on different parts of the data (GPU are good at: They have many cores, and all the cores do the same, but operate on different parts of the input data)
+1. **ccm.cfg** The configuration file defines the input and output file paths and parameters settings for the parallel ccm implementation. This cfg file contains 4 sections (paths, inputs, parameters and options), and in each section there are several key-value pairs (do not change the key name).
 
-GPUs are ridiculously fast in terms of theoretical computational power (FLOPS, Floating Point Operations Per Second). But they are often throttled down by the memory bandwidth  (Namely whether problems are memory bound or compute bound)
+``` bash
+[paths]
+input= # put the input time series csv file path here
+output= # put the output csv file path here. By default it should in Result folder
+sparkccmlib= # this is a setting only used for pyspark+GPU version
+[inputs]
+x= # for the input csv file, put the column name as the lib_column in R ccm function argument lists (like anchovy)
+y= # for the input csv file, put the column name as the target_column in R ccm function argument lists (like np_sst)
+[parameters]
+E= # the list of the embedding dimensions. Separate the values by ',' 
+tau= # the list of lag steps to construct shadow manifold. Separate the values by ','
+num_samples= # the number of samples, which is corresponding to the same argument in R ccm funciton (like 100)
+LStart= # specify the beginning value of the lib_sizes sequence
+LEnd= # specify the end value of the lib_sizes sequence
+LInterval= # specify the interval size of the lib_sizes sequence
+[options]
+GenerateOutputCSV= # 0 for not generating output csv file (only show mean value in the process); 1 for generating
+MultiLsVersion= # this is a setting only used for pyspark+GPU version
+```
+2. **TestInputCSVData** The diretory for the input time series.
+3. **Result** The directory for the output csv (4 fields: E, tau, L, rho)
+3. **PerformanceComparison** The GPU CUDA implementations in CCM, which you can test if CUDA installed properly and GPU power on the machine.
+4. **CCM** The c++ library of parallel ccm. It is the core part of the parallel implementations using c++ language and GPU CUDA accelerations.
+5. **SingleVersion,MPIVersion,SparkVersion** folders contains the compiled program, which can run on single machine, MPI cluster and Spark cluster separately. (not necessary to install GPU on these machines or clusters, you can choose to compile and run without GPU accelerations). These versions of programs have the common library -- **CCM**. These folders are used in *runsinglemachine.sh*,  *runmpic.sh*, *runsparkc.sh* scripts. 
+6. **ScalaSpark** The Scala implementation of parallel ccm, which doesn't use the **CCM** library. No GPU acceleration and pure scala code. You can run it on single machine (Specify SPARK_MASTER = local[*]) and yarn cluster (Specify SPARK_MASTER = Yarn)
 
-Memory bound: Vector Additions have to read two data elements, then perform a single addition, and then write the sum into the result vector. You will not see a speedup when doing this on the GPU, because the single addition does not compensate for the efforts of reading/writing the memory
+## Configurations of Different Versions 
 
-Compute bound:refers to problems where the number of instructions is high compared to the number of memory reads/writes. For example, consider a matrix multiplication: The number of instructions will be O(n^3) when n is the size of the matrix. In this case, one can expect that the GPU will outperform a CPU at a **certain matrix size**
+### Scala Spark
 
-On the GPU, you may encounter challenges on a much lower level: Occupancy, register pressure, shared memory pressure, memory coalescing
+This version is related to the folder **ScalaSpark**, which is implemented using IntelliJ IDE with sbt.
+
+Use the following command in the **ScalaSpark** folder to assembly a fat-jar, which can be submited to the spark yarn cluster servers.
+``` bash
+sbt assembly
+```
+
+Need to upload config file and input csv file to HDFS
+``` bash
+hadoop fs -put ./TestInputCSVData/test_float_1000.csv
+hadoop fs -put ./TestInputCSVData/test_float_1000.csv
+```
+
+Submit the jar using the following command (pass the config file path as the first argument)
+```bash
+spark-submit --master yarn scalaspark-assembly-1.0.jar ./ccm.cfg
+```
 
 
- GPU is that they do not share the same memory as the CPU. In other words, a GPU does not have direct access to the host memory. The host memory is generally larger, but slower than the GPU memory. To use a GPU, data must therefore be transferred from the main program to the GPU through the PCI bus, which has a much lower bandwidth than either memories. This means that managing data transfer between the host and the GPU will be of paramount importance. Transferring the data and the code onto the device is called offloading
+### C++ multithreading + CUDA (GPU acceleration)  - single machine
 
-###  1. global sorting  - thrust sort_by_key
-
-In order to compare with the performance of gpu, you have to close the debug mode and compile as follows:
+There are three parts in convergent cross mapping algorithm can be accelerated by GPU (CUDA or Thrust). The other part will use openMP library to achieve multi-threading. Compile using the following commands in **PerformanceComparison** folder to test if your machine can support CUDA and openMP. If not, please install CUDA toolkit firstly.
 
 ```console
 nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -o ccm OpenMP_thrust.cu
 ```
 
-the performance benchmark:
+####  1. Pairwise Euclidean distance kernel
 
--- time_series length: 
+####  2. Distance sorting  - thrust sort_by_key function
 
-1000:
-
-gpu sorting running time = 1.072339s
-
-cpu sorting running time = 0.534552s
-
-10000:
-
-gpu sorting running time = 13.196652s
-
-cpu sorting running time = 33.870094s
-
-
-###  2. alternative tool - OpenACC
-  compiler reaches an OpenACC kernels directive, it will analyze the code in order to identify sections that can be parallelized. This often corresponds to the body of the loop. we then need to rely on compiler feedback in order to identify regions it failed to parallelize when using    #pragma acc kernels.
-  
-  Another way to tell the compiler that loops iterations are independent is to specify it explicitly by using a different directive: loop, with the clause independent  --  #pragma acc loop independent
-  
-  Parallel loop vs kernel
-
-PARALLEL LOOP 
-
-    It is the programmer's responsibility to ensure that parallelism is safe
-    Enables parallelization of sections that the compiler may miss
-    Straightforward path from OpenMP
-
-KERNEL
-
-    It is the compiler's responsibility to analyze the code and determine what is safe to parallelize.
-    A single directive can cover a large area of code
-    The compiler has more room to optimize
+####  3. Pearson coefficient correlation kernel
 
 ## OpenMP  - Multi-threads
 OpenMP supports a shared memory threading:  communicating through shared variables; All threads share an address space, but it can get complicated: Consistency models based on orderings of Reads (R), Writes (W) and Synchronizations (S)
@@ -110,7 +126,10 @@ ave = ave/MAX;
 
 ```
 
-## Spark/MPI   -   Multi-nodes
+### PySpark + C++ (CUDA)  -  Cluster
+
+
+### MPI + C++ (CUDA) - Cluster
 
 MPI is used only for inter-node parallelism, while OpenMP threads control intra-node parallelism
 
@@ -170,11 +189,11 @@ MPI_Gather(void* send_data, int send_count, MPI_Datatype send_datatype, void* re
 
 ![images1](https://github.com/ALexanderpu/CCM-Parralization/blob/master/Screenshot%202018-11-27%2019.05.33.png)
 
-### MPI installation
+#### MPI installation
 
 implementation: MPICH2
 
-### Compile with cuda code
+#### Compile with cuda code
 ```console
 # compile under c standard
 mpicc -o hellow hellow.c
@@ -186,7 +205,7 @@ g++ -I/home/bo/Desktop/mpich-3.3/src/include -L/home/bo/Desktop/mpich-3.3/lib te
 nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -I/home/bo/Desktop/mpich-3.3/src/include -L/home/bo/Desktop/mpich-3.3/lib test.cu -lmpicxx -lmpi -o ccmwithcuda
 ```
 
-### Run using mpirun after compilation
+#### Run using mpirun after compilation
 option for mpirun: 
 ```console
 mpirun -np 4 ./hellow
