@@ -1,2 +1,6 @@
 /TestCSVData/pairs
 /Lectures
+/Result/*
+/SingleVersion/*
+/MPIVersion/*
+/SparkVersion/*
