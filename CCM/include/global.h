@@ -12,6 +12,7 @@ const float qnan = std::numeric_limits<float>::quiet_NaN();
 
 std::pair<std::vector<float>, std::vector<float> > parse_csv(std::string &csvfile, std::string &xname, std::string &yname);
 
+// implemented at ccm.hpp
 class CCMParallel{
     private:
         bool replacement;
@@ -42,12 +43,14 @@ class CCMParallel{
     
     public:
         CCMParallel();
+        void setGPU(bool GPUStatus);
 
         bool init(std::vector<float>& observations, std::vector<float>& targets, size_t E, size_t tau); // make global sort only once
         // check if you should init the embeded space
         std::vector<float> ccm(std::vector<float>& observations, std::vector<float>& targets, size_t E, size_t tau, size_t lib_size, int num_samples);
 };
 
+// implemented at a different file
 std::vector<std::vector<size_t> > rank_matrix_gpu(std::vector<std::vector<float> >& distance_matrix, std::vector<size_t> which_pred);
 
 #endif

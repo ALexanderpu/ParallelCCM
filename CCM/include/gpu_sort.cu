@@ -22,6 +22,5 @@ std::vector<std::vector<size_t> > rank_matrix_gpu(std::vector<std::vector<float>
     return rank_matrix;
 }
 
-
 #endif
 

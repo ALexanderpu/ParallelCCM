@@ -44,7 +44,7 @@ std::pair<std::vector<float>, std::vector<float> > parse_csv(std::string &csvfil
             y.push_back(csvdata[i][ycol]);
         }
     }else{
-        cout << "parsing error: xName and yName not found" << endl;
+        std::cout << "parsing error: xName and yName not found" << std::endl;
     }
     return std::make_pair(x, y);
 }

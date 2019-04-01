@@ -12,6 +12,10 @@ CCMParallel::CCMParallel(){
 	num_cpus = omp_get_num_procs();
 };
 
+void CCMParallel::setGPU(bool GPUStatus){
+	enable_gpus = GPUStatus;
+};
+
 float CCMParallel::dist_func(const std::vector<float>& A, const std::vector<float>& B){
     float dist = 0;
     for (auto a_iter = A.begin(), b_iter = B.begin(); a_iter != A.end(); ++a_iter, ++b_iter)
@@ -34,10 +38,6 @@ std::vector<std::vector<float> > CCMParallel::distance_matrix_cpu(std::vector<st
 	
 	return distance_matrix;
 }
-
-// !!! important
-// if you want to run mpi, add this line
-std::vector<std::vector<size_t> > rank_matrix_gpu(std::vector<std::vector<float> >& distance_matrix, std::vector<size_t> which_pred){}
 
 
 std::vector<std::vector<size_t> > CCMParallel::rank_matrix_cpu(){
@@ -110,6 +110,7 @@ bool CCMParallel::init(std::vector<float>& observations, std::vector<float>& tar
 	if(enable_global_sort){
         // can be replaced using gpu index sorting
         if(enable_gpus){
+			// std::cout << "enter here" << std::endl; 
             _rank_matrix = rank_matrix_gpu(_distance_matrix, which_pred);
         }else{
 			//std::cout << "cpu rank condition triggered" << std::endl;
