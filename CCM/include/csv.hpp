@@ -4,27 +4,47 @@
 #include "global.h"
 #include <fstream>
 // parse time-series  two columns: the first one is x and the second one is y
-std::pair<std::vector<float>, std::vector<float> > parse_csv(std::string &csvfile){
+std::pair<std::vector<float>, std::vector<float> > parse_csv(std::string &csvfile, std::string &xname, std::string &yname){
     std::ifstream data(csvfile);
     std::string line;
     std::vector<std::vector<float> > csvdata;
     unsigned long length = 0;
+    // identify which col to parse
+    bool head = true;
+    int xcol = -1, ycol = -1;
     while(getline(data, line)){
         std::stringstream lineStream(line);
         std::string cell;
-        std::vector<float> parsedRow;
-        while(getline(lineStream,cell,',')) //include head
-        {
-            parsedRow.push_back(strtof(cell.c_str(), 0));
+        if(head){
+            int index = -1;
+            while(getline(lineStream, cell, ',')){
+                index++;
+                if(cell == xname){
+                    xcol = index;
+                }else if(cell == yname){
+                    ycol = index;
+                }
+            }
+            head = false;
+        }else{
+            std::vector<float> parsedRow;
+            while(getline(lineStream, cell, ',')){ 
+                parsedRow.push_back(strtof(cell.c_str(), 0));
+            }
+            length++;
+            csvdata.push_back(parsedRow);
         }
-        length += 1;
-        csvdata.push_back(parsedRow);
     }
     std::vector<float> x, y;
-    std::cout << length-1 << " size "<< std::endl;
-    for(int i = 1; i < length; i++){
-        x.push_back(csvdata[i][1]);
-        y.push_back(csvdata[i][2]);
+    std::cout << length << " size "<< std::endl;
+
+    if(xcol != -1 && ycol != -1){
+        for(int i = 0; i < length; i++){
+            x.push_back(csvdata[i][xcol]);
+            y.push_back(csvdata[i][ycol]);
+        }
+    }else{
+        cout << "parsing error: xName and yName not found" << endl;
     }
     return std::make_pair(x, y);
 }

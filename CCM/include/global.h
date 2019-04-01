@@ -10,7 +10,7 @@ static float min_weight = 0.000001;
 
 const float qnan = std::numeric_limits<float>::quiet_NaN();
 
-std::pair<std::vector<float>, std::vector<float> > parse_csv(std::string &csvfile);
+std::pair<std::vector<float>, std::vector<float> > parse_csv(std::string &csvfile, std::string &xname, std::string &yname);
 
 class CCMParallel{
     private:

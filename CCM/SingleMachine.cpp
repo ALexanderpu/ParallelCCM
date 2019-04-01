@@ -49,8 +49,12 @@ int main(int argc, char *argv[])
         // read csv file for observations and targets to broadcast to other processor
         string input = cr.get_string("paths", "input");
         string output = cr.get_string("paths", "output");
+
+        // read input col x, y name
+        string xname = cr.get_string("inputs", "x");
+        string yname = cr.get_string("inputs", "y");
         
-        std::tie(observations, targets) = parse_csv(input);
+        std::tie(observations, targets) = parse_csv(input, xname, yname);
         num_vectors = observations.size();
         size_t e = EArr[0];
         size_t t = tauArr[0];
