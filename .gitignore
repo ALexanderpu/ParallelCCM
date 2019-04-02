@@ -5,6 +5,9 @@
 /MPIVersion/*
 /SparkVersion/*
 
+/ScalaSpark/project/target/*
+/ScalaSpark/project/project/*
+
 # User-specific stuff:
 /ScalaSpark/.idea/**/workspace.xml
 /ScalaSpark/.idea/**/tasks.xml
