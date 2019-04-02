@@ -4,3 +4,39 @@
 /SingleVersion/*
 /MPIVersion/*
 /SparkVersion/*
+
+# User-specific stuff:
+/ScalaSpark/.idea/**/workspace.xml
+/ScalaSpark/.idea/**/tasks.xml
+/ScalaSpark/.idea/dictionaries
+
+# Sensitive or high-churn files:
+/ScalaSpark/.idea/**/dataSources/
+/ScalaSpark/.idea/**/dataSources.ids
+/ScalaSpark/.idea/**/dataSources.xml
+/ScalaSpark/.idea/**/dataSources.local.xml
+/ScalaSpark/.idea/**/sqlDataSources.xml
+/ScalaSpark/.idea/**/dynamic.xml
+/ScalaSpark/.idea/**/uiDesigner.xml
+
+# Gradle:
+/ScalaSpark/.idea/**/gradle.xml
+/ScalaSpark/.idea/**/libraries
+
+### SBT ###
+# Simple Build Tool
+# http://www.scala-sbt.org/release/docs/Getting-Started/Directories.html#configuring-version-control
+
+/ScalaSpark/dist/*
+/ScalaSpark/target/*
+/ScalaSpark/lib_managed/
+/ScalaSpark/src_managed/
+/ScalaSpark/project/boot/
+/ScalaSpark/project/plugins/project/
+/ScalaSpark/.history
+/ScalaSpark/.cache
+/ScalaSpark/.lib/
+
+### Scala ###
+/ScalaSpark/*.class
+/ScalaSpark/*.log

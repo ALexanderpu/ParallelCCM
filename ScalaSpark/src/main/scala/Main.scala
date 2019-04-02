@@ -131,7 +131,7 @@ object Main {
 
     var begin_time = System.nanoTime()
     // 1. read csv file here to get x, y and generate lag-vectors
-    val input = spark.read.format("csv").option("header", "true").option("inferschema", "true").load(config("paths-input")).select("x", "y")
+    val input = spark.read.format("csv").option("header", "true").option("inferschema", "true").load(config("paths-input"))
     // 2. read parameters
     val num_samples = config("parameters-num_samples").toInt
     val l1 = config("parameters-LStart").toInt
@@ -145,9 +145,11 @@ object Main {
 
     val xsName = config("inputs-x")
     val ysName = config("inputs-y")
+
     val xsRaw = input.select(xsName).collect().map(_(0).asInstanceOf[Double])
     val ysRaw = input.select(ysName).collect().map(_(0).asInstanceOf[Double])
-
+    //logger.warn(s"**** read inputs xs: $xsName ****")
+    //logger.warn(s"**** read inputs ys: $ysName ****")
     var end_time = System.nanoTime()
     var duration = (end_time - begin_time) / 1e9d
     logger.warn(s"**** read inputs and parameters time: $duration second ****")
@@ -167,7 +169,7 @@ object Main {
         if(IsWriteFile == 1){
           // time-consuming 80% time on writing? try spark write but need to convert to dataframe
           val outputpath = config("paths-output")
-          val outputFile = new BufferedWriter(new FileWriter(outputpath + "/ccm_scalaspark_samples_"+ num_samples.toString + "_E_" + e.toString + "_tau_" + tau.toString + ".csv"))
+          val outputFile = new BufferedWriter(new FileWriter(outputpath + "/e_" + e.toString + "_tau_" + tau.toString + "_scalaspark.csv"))
           val csvWriter = new CSVWriter(outputFile)
           val csvFields = Array("E", "tau", "L", "rho")
           val totalRecords = result.length * num_samples
@@ -185,7 +187,6 @@ object Main {
           csvWriter.writeAll(listOfRecords.toList)
           outputFile.close()
         }
-
       }
     }
     end_time = System.nanoTime()

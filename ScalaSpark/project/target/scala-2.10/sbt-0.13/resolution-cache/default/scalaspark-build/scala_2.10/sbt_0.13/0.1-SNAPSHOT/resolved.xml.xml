@@ -4,7 +4,7 @@
 		module="scalaspark-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20190320145856"
+		publication="20190401171544"
 		e:sbtVersion="0.13" e:scalaVersion="2.10"
 	>
 		<description>
@@ -42,5 +42,7 @@
 			<artifact name="global-plugins" type="src" ext="jar" conf="sources" e:classifier="sources"/>
 			<artifact name="global-plugins" type="doc" ext="jar" conf="docs" e:classifier="javadoc"/>
 		</dependency>
+		<dependency org="com.eed3si9n" name="sbt-assembly" rev="0.14.9" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
+		<dependency org="com.artima.supersafe" name="sbtplugin" rev="1.1.3" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
 	</dependencies>
 </ivy-module>
