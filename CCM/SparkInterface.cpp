@@ -68,11 +68,11 @@ int main(int argc, char *argv[]){
             // later we need to check if c++ can write hdfs file system
             
             string output_file = "/e_" + to_string(e) + "_tau_" + to_string(tau) + "_sparkc.csv";
-            string output = "/home/bo/cloud/CCM-Parralization/Result";
-            string output_path = output + output_file;
-            /*
+            string output_dir = "/home/bo/cloud/CCM-Parralization/Result";
+            string output_path = output_dir + output_file;
+            
             dump_csv_multiLs(output_path, rho_bins, e, tau);
-            */
+            
             cout << output_path << endl;
         }
         // for testing input

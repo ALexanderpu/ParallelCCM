@@ -72,6 +72,7 @@ void dump_csv_multiLs(std::string csvfile, std::unordered_map<size_t, std::vecto
     std::ofstream resultfile;
 	resultfile.open(csvfile);
     if(resultfile.is_open()){
+        // std::cout << realpath(csvfile.c_str(), NULL) << std::endl;
         std::string header = "E, tau, L, rho\n";
         resultfile << header;
         for(auto it = rho_bins.begin(); it != rho_bins.end(); it++){

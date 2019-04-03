@@ -29,7 +29,7 @@ then
     echo "compiling successfully, running single machine parallel version of ccm with gpu acceleration enabled"
     chmod u+x ./SingleVersion/singlemachine
     # pass the config file here
-    ./SingleVersion/singlemachine /home/bo/cloud/CCM-Parralization/ccm.cfg
+    ./SingleVersion/singlemachine /home/bo/cloud/CCM-Parralization/ccm.cfg # configure file fullpath needs to be replaced
 else
     echo "the compiling process fail!"
 fi
