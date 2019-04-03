@@ -29,7 +29,8 @@ import java.io.{BufferedWriter, FileWriter}
 
 object Main {
 
-  val SPARK_MASTER = "local[*]"
+  //val SPARK_MASTER = "local[*]"
+  val SPARK_MASTER = "yarn"
 
   def isEnvSection (text :String):Boolean = {
     if(text.startsWith("[") && text.endsWith("]")) {
@@ -50,7 +51,9 @@ object Main {
   // for each l in Ls return samples rhos
   def ccm(x:Array[Double], y:Array[Double], e:Int, tau:Int, Ls:Array[Int], samples:Int):Array[Tuple2[Int, Array[Double]]] = {
 
+    // for local run
     val spark = SparkSession.builder().master(SPARK_MASTER).appName("CCM Job").getOrCreate()
+
     spark.sparkContext.setLogLevel("WARN")
     // 1. build Mx and sort accordingly
     val Mx = shadowManifold(x, e, tau)
@@ -116,10 +119,10 @@ object Main {
           key = kv(0)
           value = kv(1)
           config += (curEnv + "-" + key -> value)
-            // println(key + " " + value)
+          // println(key + " " + value)
         }else{
           curEnv = sectionParse(line)
-            // println(curEnv)
+          // println(curEnv)
         }
       }
     }

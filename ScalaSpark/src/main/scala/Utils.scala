@@ -10,11 +10,11 @@ object Utils{
   def mean(arr: Array[Double]):Double = arr.sum / arr.length
 
   def euclideanDistance(x:Array[Double], y:Array[Double]):Double = {
-     Math.sqrt((x, y).zipped.map((a, b) => Math.pow(a-b, 2)).sum)
+    Math.sqrt((x, y).zipped.map((a, b) => Math.pow(a-b, 2)).sum)
   }
 
   def sortNeighbors(vecFocus: Array[Double], space: Array[Tuple2[Int, Array[Double]]]):Array[Tuple2[Int, Double]] = {
-     space.map(point => (point._1, euclideanDistance(point._2, vecFocus))).sortBy(_._2).dropWhile(_._2 < epsilon)
+    space.map(point => (point._1, euclideanDistance(point._2, vecFocus))).sortBy(_._2).dropWhile(_._2 < epsilon)
   }
 
   def pearsonCoeff(xs: Array[Double], ys: Array[Double]):Double = {

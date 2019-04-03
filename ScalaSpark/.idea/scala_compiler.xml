@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="SBT 1" modules="scalaspark">
-      <plugins>
-        <plugin path="$USER_HOME$/.ivy2/cache/com.artima.supersafe/supersafe_2.11.12/jars/supersafe_2.11.12-1.1.3.jar" />
-      </plugins>
-    </profile>
+    <profile name="SBT 1" modules="scalaspark" />
   </component>
 </project>
