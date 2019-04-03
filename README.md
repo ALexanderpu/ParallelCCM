@@ -32,30 +32,178 @@ LStart= # specify the beginning value of the lib_sizes sequence
 LEnd= # specify the end value of the lib_sizes sequence
 LInterval= # specify the interval size of the lib_sizes sequence
 [options]
+GPUAcceleration= # cuda has already installed can be set as 1, not install cuda must be set as 0
 GenerateOutputCSV= # 0 for not generating output csv file (only show mean value in the process); 1 for generating
 MultiLsVersion= # this is a setting only used for pyspark+GPU version
 ```
 2. **TestInputCSVData** The diretory for the input time series.
-3. **Result** The directory for the output csv (4 fields: E, tau, L, rho)
+3. **Result** The directory for the output csv. (4 fields: E, tau, L, rho)
 3. **PerformanceComparison** The GPU CUDA implementations in CCM, which you can test if CUDA installed properly and GPU power on the machine.
 4. **CCM** The c++ library of parallel ccm. It is the core part of the parallel implementations using c++ language and GPU CUDA accelerations.
 5. **SingleVersion,MPIVersion,SparkVersion** folders contains the compiled program, which can run on single machine, MPI cluster and Spark cluster separately. (not necessary to install GPU on these machines or clusters, you can choose to compile and run without GPU accelerations). These versions of programs have the common library -- **CCM**. These folders are used in *runsinglemachine.sh*,  *runmpic.sh*, *runsparkc.sh* scripts. 
 6. **ScalaSpark** The Scala implementation of parallel ccm, which doesn't use the **CCM** library. No GPU acceleration and pure scala code. You can run it on single machine (Specify SPARK_MASTER = local[*]) and yarn cluster (Specify SPARK_MASTER = Yarn)
 
-## Configurations of Different Versions 
+## Configurations of Different Parallel Versions 
 
-### Scala Spark
+
+### C++ Single Machine (with/without GPU acceleration)
+
+There are several prerequisites before runing ccm on one single machine. (Suggest Linux system like Ubuntu 16.04). 
+
+1. Check compiler dependencies: G++ and NVCC.
+```bash
+g++ --version
+nvcc --version
+```
+2. Install compiler dependencies: NVIDIA CUDA toolkit can be found [here](http://developer.nvidia.com/cuda-downloads). This step can be skip if there is no GPU on your machine. You can directly jump to step 3 (the script will check if you install CUDA). By the way, if you skip this step, please set [options|GPUAcceleration] = 0 in ccm.cfg file.
+
+```bash
+# install g++ using one of the two following command
+sudo apt install g++
+sudo apt install build-essential
+
+# install cuda
+# you need: CUDA-capable GPU (hardware), linux with gcc compiler (system) and NIVIDIA CUDA Toolkit (software)
+# download Toolkit: cuda_10.0.130_410.48_linux.run to Download directory
+
+# remove everything nvidia component installed  and close desktop (use ssh login to install)
+sudo apt-get purge nvidia* 
+sudo service lightdm stop
+sudo init 3
+sudo reboot
+chmod u+x ~/Downloads/cuda_10.0.130_410.48_linux.run
+# if they need reboot as the reason  An attmept has been made to disable Nouveau
+sudo nano /etc/modprobe.d/blacklist-nouveau.conf
+## copy following lines
+blacklist nouveau
+options nouveau modeset=0
+##
+sudo update-initramfs -u
+sudo reboot
+# then login in and rerun
+sudo bash ~/Downloads/cuda_10.0.130_410.48_linux.run -silent
+
+vim ~/.profile  # add this line below to permanently add into path
+export PATH=$PATH:/usr/local/cuda-10.0/bin
+export PATH=$PATH:/usr/local/cuda-10.0/lib64  # cublas libraryx`
+nvcc --version # nvcc: NVIDIA (R) Cuda compiler driver
+nvidia-smi     # check CUDA GPU status
+# show desktop again
+sudo service lightdm start
+```
+
+3. Compile and run parallel CCM in single machine:
+```bash
+# download the project and cd into the project folder. 
+# replacy the ccm.cfg full filepath in runsinglemachine.sh and run
+bash ./runsinglemachine.sh
+```
+
+### MPI Cluster
+MPI is simply a standard which others follow in their implementation. Because of this, there are a wide variety of MPI implementations out there. One of the most popular implementations, MPICH2, will be used for all of the examples provided through this version. There are several prerequisites before runing ccm on MPI cluster. (Suggest Linux systems like Ubuntu 16.04). 
+1. Install g++ compiler (refer to previous section)
+
+2. Install MPI on single machine: 
+* Install compiler dependencies on single machine: MPICH2 (the latest version of MPICH2 is available [here](https://www.mpich.org/)). The version that I will be using is 3.3. Once doing this, you should be able to configure your installation by performing ***./configure --disable-fortran***. When configuration is done, it is time to build and install MPICH2 with ***make; sudo make install***.
+```bash
+tar -xzf mpich-3.3.tar.gz
+cd mpich-3.3
+./configure --disable-fortran
+make; sudo make install
+mpiexec --version
+```
+* Check compiler dependencies on single machine: If your build was successful, you should be able to type ***mpiexec --version*** and see something similar to this.
+```bash
+HYDRA build details:
+    Version:                         3.3
+    Release Date:                    Wed Nov 21 15:02:56 CST 2018
+```
+
+3. Install MPI as Cluster within a LAN: 
+
+* Repeating step 1 and 2 to install MPICH2 on every node in the cluster you prepared. Then configure your ***hosts*** file to set up login the nodes (IP addresses have to be replaced) without password (so we can login use ssh host_i). This file is used by your device operating system to map hostnames to IP addresses. 
+
+```bash
+# set up ssh login without password and edit the hosts file:  we can login use ssh host_i (replace use any: host0, host1, host2, host3)
+sudo vim /etc/hosts
+---  add contents in this file:
+10.80.64.41     host0
+10.80.64.35     host1
+10.80.64.53     host2
+10.80.64.110    host3
+---
+sudo apt-get install openssh-server
+ssh-keygen
+ssh-add
+ssh-copy-id youraccountusername@hosti
+# verify if you can login without password
+ssh host_i 
+```
+
+
+* Setting up NFS server for shared directory: ~/cloud. It involves two steps: Set NFS server on master machine; Set NFS client on other machines in the cluster. You share a directory via NFS in master which the client mounts to exchange data.
+
+```bash
+# 1. setting NFS server on master machine: host0
+sudo apt-get install -y nfs-kernel-server
+cd ~
+mkdir cloud  # under ~
+
+sudo vim /etc/exports
+---  add an entry in this file: 
+/home/bo/cloud *(rw,sync,no_root_squash,no_subtree_check)
+---
+sudo exportfs -a
+sudo service nfs-kernel-server restart
+
+
+# 2. setting NFS client on worker machines: host1, host2, host3
+sudo apt-get install nfs-common
+cd ~
+mkdir cloud  # under ~
+sudo mount -t nfs host1:~/cloud ~/cloud
+
+# 3. for all the clients in the cluster
+df -h
+# if success will show: host0:~/cloud  49G   15G   32G  32% /home/youraccountusername/cloud
+```
+
+4.  Compile and run parallel CCM in MPI cluster:
+```bash
+# download the project and cd into the project folder. 
+# replacy the ccm.cfg full filepath in runmpic.sh and run
+bash ./runmpic.sh
+```
+
+
+
+### Scala Spark Cluster
 
 This version is related to the folder **ScalaSpark**, which is implemented using IntelliJ IDE with sbt.
 
+Installation of Spark Yarn Cluster please refer to [this site](https://github.com/hortonworks/ansible-hortonworks). Another option is Google Cloud Platform (GCP).
+
+After setting Spark Yarn Cluster, you can submit the scala project fat-jar using ***spark-submit***.
+
 Use the following command in the **ScalaSpark** folder to assembly a fat-jar, which can be submited to the spark yarn cluster servers.
+Before ***sbt assembly***, 2 things should be done:
+
+1. Need to change build.sbt to have the 'provided' lines so that the assembly won't include the spark source jars.
+2. Need to change the SparkSession in the source code to have no master URL, and instead specify the URL at submit.
+
 ``` bash
+cd ./ScalaSpark
+# did some modification on build.sbt and source code
 sbt assembly
+# you can find the jar in the directory ./ScalaSpark/target/scala-2.11/
+
+# replace arg0 with the ccm.cfg file (also replace inputs csv file and outputs directory with the path in hdfs)
+spark-submit --master yarn scala-spark-assembly-1.0.jar arg0
 ```
 
 Need to upload config file and input csv file to HDFS
 ``` bash
-hadoop fs -put ./TestInputCSVData/test_float_1000.csv
+hadoop fs -put ./ccm.cfg
 hadoop fs -put ./TestInputCSVData/test_float_1000.csv
 ```
 
@@ -64,134 +212,10 @@ Submit the jar using the following command (pass the config file path as the fir
 spark-submit --master yarn scalaspark-assembly-1.0.jar ./ccm.cfg
 ```
 
-
-### C++ multithreading + CUDA (GPU acceleration)  - single machine
-
-There are three parts in convergent cross mapping algorithm can be accelerated by GPU (CUDA or Thrust). The other part will use openMP library to achieve multi-threading. Compile using the following commands in **PerformanceComparison** folder to test if your machine can support CUDA and openMP. If not, please install CUDA toolkit firstly.
-
-```console
-nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -o ccm OpenMP_thrust.cu
-```
-
-####  1. Pairwise Euclidean distance kernel
-
-####  2. Distance sorting  - thrust sort_by_key function
-
-####  3. Pearson coefficient correlation kernel
-
-## OpenMP  - Multi-threads
-OpenMP supports a shared memory threading:  communicating through shared variables; All threads share an address space, but it can get complicated: Consistency models based on orderings of Reads (R), Writes (W) and Synchronizations (S)
-use synchronization to protect data writing conflicts.  you have to wait writing then read
-(Synchronization is used to impose order constraints and to protect access to shared data)
-
-```cpp
-#include<omp.h>
+### PySpark Cluster (with/without GPU acceleration)
 
 
-omp_lock_t lck;
-omp_init_lock(&lck);
-size_t num_cpus = omp_num_procs();
-omp_set_num_threads(num_cpus);
-#pragma omp parallel for
-for(int sample = 0; sample < num_samples; sample++){
-  int ID = omp_get_thread_num();
-  // data shareing: local variables inside parallel scope are automatically private;  global variables outside parallel scope are automatically shared
-  
-  // Mutual exclusion: Only one thread at a time can enter a critical region.
-  #pragma omp critical
-  vec.push_back(sample);
-  
-  // Atomic provides mutual exclusion but only applies to the read/update of a memory location
-  #pragma omp atomic
-  x += tmp;
-  
-  // Single is executed by only one thread (differentiate from critical: one thread one time for all threads)
-  #pragma omp single
-  { exchange_boundaries(); }
-  
-  // lock is the low level of critical
-  omp_set_lock(&lck); //Wait here for your turn
-  printf(“%d %d”, id, tmp);
-  omp_unset_lock(&lck); //Release the lock so the next thread gets a turn
-}
 
-// reduction (op : list) .    The variables in “list” must be shared in the enclosing parallel region. 
-double ave=0.0, A[MAX]; int i;
-#pragma omp parallel for reduction (+:ave)
-for (i=0;i< MAX; i++) {
-   ave + = A[i];
-}
-ave = ave/MAX; 
-
-
-```
-
-### PySpark + C++ (CUDA)  -  Cluster
-
-
-### MPI + C++ (CUDA) - Cluster
-
-MPI is used only for inter-node parallelism, while OpenMP threads control intra-node parallelism
-
-Mitigating Bottlenecks of cluster computing:  reducing the response time for large L jobs as we have to wait until the last job done in multi nodes.
-How to:  build once and query multiple times for nearest neighbors finding
-
-The central issue here is the overhead involved in internode communication:
-
-Point-to-Point communication
-
-MPI_Send(void* data, int count, MPI_Datatype datatype, int destination, int tag, MPI_Comm communicator)
-
-MPI_Recv(void* data, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm communicator, MPI_Status* status)
-
-The first argument is the data buffer. The second and third arguments describe the count and type of elements that reside in the buffer. The fourth and fifth arguments specify the rank of the sending/receiving process and the tag of the message. The sixth argument specifies the communicator and the last argument (for MPI_Recv only) provides information about the received message.
-
-```cpp
-// Find out rank, size
-int world_rank;
-MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-int world_size;
-MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-int number;
-if (world_rank == 0) {
-    number = -1;
-    MPI_Send(&number, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
-} else if (world_rank == 1) {
-    MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,
-             MPI_STATUS_IGNORE);
-    printf("Process 1 received number %d from process 0\n",
-           number);
-}
-```
-
-Collective communication is that it implies a synchronization point among processes:
-
-MPI_Barrier(MPI_Comm communicator) 
-
--- MPI has a special function that is dedicated to synchronizing processer, the function forms a barrier, and no processes in the communicator can pass the barrier until all of them call the function.
-
-
-MPI_Bcast(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm communicator)
-
-**broadcast the time series data**
-
--- A broadcast is one of the standard collective communication techniques. During a broadcast, one process sends the same data to all processes in a communicator. One of the main uses of broadcasting is to send out user input to a parallel program, or send out configuration parameters to all processes.
-the root process and receiver processes do different jobs, they all call the same MPI_Bcast function. When the root process (in our example, it was process zero) calls MPI_Bcast, the data variable will be sent to all other processes. When all of the receiver processes call MPI_Bcast, the data variable will be filled in with the data from the root process.
-
-MPI_Scatter(void* send_data, int send_count, MPI_Datatype send_datatype, void* recv_data, int recv_count, MPI_Datatype recv_datatype, int root,MPI_Comm communicator)
-
-**scatter the parameter combinations**
-
-MPI_Gather(void* send_data, int send_count, MPI_Datatype send_datatype, void* recv_data, int recv_count, MPI_Datatype recv_datatype, int root, MPI_Comm communicator)
-
-**gater the rhos results for different parameter**
-
-![images1](https://github.com/ALexanderpu/CCM-Parralization/blob/master/Screenshot%202018-11-27%2019.05.33.png)
-
-#### MPI installation
-
-implementation: MPICH2
 
 #### Compile with cuda code
 ```console
