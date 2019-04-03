@@ -71,10 +71,9 @@ int main(int argc, char **argv){
             // read csv file for observations and targets to broadcast to other processor
             string input = cr.get_string("paths", "input");
             string output = cr.get_string("paths", "output");
-
             string xname = cr.get_string("inputs", "x");
             string yname = cr.get_string("inputs", "y");
-            
+
             std::tie(observations, targets) = parse_csv(input, xname, yname);
             num_vectors = observations.size();
         }catch(int e){
@@ -149,8 +148,8 @@ int main(int argc, char **argv){
         vector<float> result = cp.ccm(observations, targets, combinationEArr[i], combinationtauArr[i], combinationLArr[i], num_samples);
         cout << "task " << i << " with id:  " << my_id << " has the first result: " << result[0] << " size is: " << result.size() << endl;
         // better to save result into csv here
-        std::string csvfile = output +  "/e_" + to_string(combinationEArr[i]) + "_tau_" + to_string(combinationtauArr[i]) + "_l_" + to_string(combinationLArr[i]) + "_MPIversion.csv";
-        dump_csv(csvfile, result, (size_t)combinationEArr[i], (size_t)combinationtauArr[i], (size_t)combinationLArr[i]);
+        //std::string csvfile = output +  "/e_" + to_string(combinationEArr[i]) + "_tau_" + to_string(combinationtauArr[i]) + "_l_" + to_string(combinationLArr[i]) + "_MPIversion.csv";
+        //dump_csv(csvfile, result, (size_t)combinationEArr[i], (size_t)combinationtauArr[i], (size_t)combinationLArr[i]);
         //float* a = &result[0];
         //MPI_Gather(a, num_samples, MPI_FLOAT, finalResult[i], num_samples, MPI_FLOAT, 0, MPI_COMM_WORLD);
     }
