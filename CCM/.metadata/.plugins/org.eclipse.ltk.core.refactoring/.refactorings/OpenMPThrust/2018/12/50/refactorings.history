@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;OpenMPThrust/config.cpp&apos; to &apos;config.cu&apos;" description="Rename resource &apos;config.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="config.cpp" name="config.cu" stamp="1544389389484" updateReferences="true"/>
-</session>
