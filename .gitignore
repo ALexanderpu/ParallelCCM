@@ -5,6 +5,10 @@
 /MPIVersion/*
 /SparkVersion/*
 
+
+# ignore large file
+.vscode/*
+
 /ScalaSpark/project/target/*
 /ScalaSpark/project/project/*
 
