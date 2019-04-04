@@ -1,5 +1,7 @@
 # Applying Parallel Techniques on Convergent Cross Mapping (CCM)
 ---
+[![Build Status](https://travis-ci.com/ALexanderpu/CCM-Parralization.svg?token=38AAxXGq77ksaSrhHKSS&branch=newest)
+
 ## Overview
 
 This repository is the parallel version of R package `rEDM` function `ccm`, which was originally implemented by [ha0ye](https://github.com/ha0ye/rEDM) to infer the causality using time series. Different parallel techniques used in the code: GPU CUDA, Spark and MPI/OpenMP. Other similar computation-intensive algorithms which require parallelizing can also refer this repository. This implementation can improve the execution speed when trying an wide range of parameters: E, tau, lib_sizes. The output is csv file format and there is R script which can transfer the csv file into the density plots. By observing the pattern of these plots, we can infer the causality with confidence.
