@@ -1,8 +1,10 @@
 language: bash
 
-before_script:
-    - apt install g++
-
+install: make get-deps
+compiler:
+  - clang
+  - gcc
+  - g++
 script:
     - bash runsinglemachine.sh
     - echo "finished!"
