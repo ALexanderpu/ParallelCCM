@@ -1,0 +1,7 @@
+language: bash
+
+before_script:
+    - apt install g++
+
+script:
+    - bash runsinglemachine.sh
