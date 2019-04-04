@@ -14,13 +14,13 @@ anchovy_xmap_sst <- ccm(sardine_anchovy_sst, E = 3, lib_column = "anchovy",
 
 ## Project Layout
 
-1. **ccm.cfg** The configuration file defines the input and output file paths and parameters settings for the parallel ccm implementation. This cfg file contains 4 sections (paths, inputs, parameters and options), and in each section there are several key-value pairs (do not change the key name).
+1. **ccm.cfg** The configuration file defines the input and output file paths and parameters settings for the parallel ccm implementation. This cfg file contains 4 sections (paths, inputs, parameters and options), and in each section there are several key-value pairs (do not change the key name). (ccm-scala.cfg is a copy of ccm.cfg: basically the same but scala use hdfs directory, which is slight different from other versions - NFS shared directory)
 
 ``` bash
 [paths]
-input= # put the input time series csv file path here
-output= # put the output csv file path here. By default it should in Result folder
-sparkccmlib= # this is a setting only used for pyspark+GPU version
+input= # put the input time series csv file fullpath here
+output= # put the output csv file fullpath here. By default it should in Result folder
+sparkccmlib= # this is a setting only used for pyspark+GPU version, the extern application fullpath (default it is in the SparkVersion folder)
 [inputs]
 x= # for the input csv file, put the column name as the lib_column in R ccm function argument lists (like anchovy)
 y= # for the input csv file, put the column name as the target_column in R ccm function argument lists (like np_sst)
@@ -34,16 +34,15 @@ LInterval= # specify the interval size of the lib_sizes sequence
 [options]
 GPUAcceleration= # cuda has already installed can be set as 1, not install cuda must be set as 0
 GenerateOutputCSV= # 0 for not generating output csv file (only show mean value in the process); 1 for generating
-MultiLsVersion= # this is a setting only used for pyspark+GPU version
 ```
 2. **TestInputCSVData** The diretory for the input time series.
 3. **Result** The directory for the output csv. (4 fields: E, tau, L, rho)
 3. **PerformanceComparison** The GPU CUDA implementations in CCM, which you can test if CUDA installed properly and GPU power on the machine.
 4. **CCM** The c++ library of parallel ccm. It is the core part of the parallel implementations using c++ language and GPU CUDA accelerations.
-5. **SingleVersion,MPIVersion,SparkVersion** folders contains the compiled program, which can run on single machine, MPI cluster and Spark cluster separately. (not necessary to install GPU on these machines or clusters, you can choose to compile and run without GPU accelerations). These versions of programs have the common library -- **CCM**. These folders are used in *runsinglemachine.sh*,  *runmpic.sh*, *runsparkc.sh* scripts. 
+5. **SingleVersion,MPIVersion,SparkVersion** folders contains the compiled C++ program, which can run on single machine, MPI cluster and Spark cluster separately. (not necessary to install GPU on these machines or clusters, you can choose to compile and run without GPU acceleration). These versions of programs have the common library -- **CCM**. These folders are used in *runsinglemachine.sh*,  *runmpic.sh*, *runsparkc.sh* scripts. 
 6. **ScalaSpark** The Scala implementation of parallel ccm, which doesn't use the **CCM** library. No GPU acceleration and pure scala code. You can run it on single machine (Specify SPARK_MASTER = local[*]) and yarn cluster (Specify SPARK_MASTER = Yarn)
 
-## Configurations of Different Parallel Versions 
+## Configurations of Different Parallel CCM Versions 
 
 
 ### C++ Single Machine (with/without GPU acceleration)
@@ -55,7 +54,7 @@ There are several prerequisites before runing ccm on one single machine. (Sugges
 g++ --version
 nvcc --version
 ```
-2. Install compiler dependencies: NVIDIA CUDA toolkit can be found [here](http://developer.nvidia.com/cuda-downloads). This step can be skip if there is no GPU on your machine. You can directly jump to step 3 (the script will check if you install CUDA). By the way, if you skip this step, please set [options|GPUAcceleration] = 0 in ccm.cfg file.
+2. Install G++, NVCC compiler dependencies: NVIDIA CUDA toolkit can be found [here](http://developer.nvidia.com/cuda-downloads). This step can be skip if there is no GPU on your machine. You can directly jump to step 3 (the script will check if you install CUDA). By the way, if you skip this step, please set [options|GPUAcceleration] = 0 in ccm.cfg file.
 
 ```bash
 # install g++ using one of the two following command
@@ -100,8 +99,10 @@ bash ./runsinglemachine.sh
 ```
 
 ### MPI Cluster
+This version requires 2 things: MPI cluster with a shared file directory.
+
 MPI is simply a standard which others follow in their implementation. Because of this, there are a wide variety of MPI implementations out there. One of the most popular implementations, MPICH2, will be used for all of the examples provided through this version. There are several prerequisites before runing ccm on MPI cluster. (Suggest Linux systems like Ubuntu 16.04). 
-1. Install g++ compiler (refer to previous section)
+1. Install G++ compiler (refer to previous section)
 
 2. Install MPI on single machine: 
 * Install compiler dependencies on single machine: MPICH2 (the latest version of MPICH2 is available [here](https://www.mpich.org/)). The version that I will be using is 3.3. Once doing this, you should be able to configure your installation by performing ***./configure --disable-fortran***. When configuration is done, it is time to build and install MPICH2 with ***make; sudo make install***.
@@ -163,81 +164,100 @@ cd ~
 mkdir cloud  # under ~
 sudo mount -t nfs host1:~/cloud ~/cloud
 
-# 3. for all the clients in the cluster
+# 3. check in all the clients in the cluster
 df -h
 # if success will show: host0:~/cloud  49G   15G   32G  32% /home/youraccountusername/cloud
+
+# 4. modify the permission in the master (if you want to generate csv file)
+chmod -R 777 ~/cloud
 ```
+
+(**Note**: Please put CCM-Parallelization project folder under the shared file directory)
 
 4.  Compile and run parallel CCM in MPI cluster:
 ```bash
 # download the project and cd into the project folder. 
-# replacy the ccm.cfg full filepath in runmpic.sh and run
+# replace the ccm.cfg full filepath in runmpic.sh and run
 bash ./runmpic.sh
+```
+
+### PySpark Cluster (with/without GPU acceleration)
+
+This version requires 2 things: Spark Yarn cluster with a shared file direcory. 
+
+1. Install G++, NVCC compiler (refer to single machine section)
+
+2. Installation of Python libraries:
+
+```bash
+sudo apt upgrade
+# installing python 2.7 and pip for it
+sudo apt install python2.7 python-pip
+
+# install python libraries
+pip install configparser
+pip install numpy
+pip install json
+pip install pyspark
+pip install pandas
+```
+3. Installation of Spark Yarn Cluster (please refer to  [Ambari](https://github.com/hortonworks/ansible-hortonworks)). Another option is Google Cloud Platform (GCP).
+
+- You can submit python file or fat-jar to Yarn using ***spark-submit*** if Yarn and Spark have been successfully installed.
+```bash
+spark-submit ./SparkCCM.py
+```
+
+- The implementation mainly utilizes ***pipedRDD*** to assign tasks and invoke external application, which you have to specify the application path (using NFS shared directory) in ccm.cfg: [path|sparkccmlib] 
+
+
+4. Compile and run parallel CCM in Spark Yarn cluster:
+```bash
+# download the project and cd into the project folder. 
+# replace the ccm.cfg full filepath in runmpic.sh and run
+bash ./runsparkc.sh
 ```
 
 
 
-### Scala Spark Cluster
+
+
+### Scala Spark
 
 This version is related to the folder **ScalaSpark**, which is implemented using IntelliJ IDE with sbt.
 
-Installation of Spark Yarn Cluster please refer to [this site](https://github.com/hortonworks/ansible-hortonworks). Another option is Google Cloud Platform (GCP).
+#### Local Mode
+
+Local Mode is relatively easy. download IntelliJ IDE and import ScalaSpark as a spark project. Modify two places before running
+change two things in the ScalaSpark folder: 
+1. main.scala: set SPARK_MASTER -> "local[*]"; 
+2. build.sbt: remove "provided" in spark-related packages;
+
+Also, it is necessary to pass ccm-scala.cfg file fullpath as the first argument in the program.
+
+
+
+
+#### Yarn Cluster Mode
+
+Installation of Spark Yarn Cluster (please refer to  [Ambari](https://github.com/hortonworks/ansible-hortonworks)). Another option is Google Cloud Platform (GCP).
 
 After setting Spark Yarn Cluster, you can submit the scala project fat-jar using ***spark-submit***.
 
 Use the following command in the **ScalaSpark** folder to assembly a fat-jar, which can be submited to the spark yarn cluster servers.
 Before ***sbt assembly***, 2 things should be done:
-
-1. Need to change build.sbt to have the 'provided' lines so that the assembly won't include the spark source jars.
-2. Need to change the SparkSession in the source code to have no master URL, and instead specify the URL at submit.
+1. main.scala: set SPARK_MASTER -> "yarn"; 
+2. build.sbt: have the 'provided' lines so that the assembly won't include the spark source jars.
 
 ``` bash
 cd ./ScalaSpark
-# did some modification on build.sbt and source code
+# before assembling fat-jar: change two things in the ScalaSpark folder: 1. source code: SPARK_MASTER -> "yarn"; 2. build.sbt spark package to "provided"
+# if assembly successfully, the fat-jar will be stored at ./target/scala-2.11/scala-spark-ccm-assembly-0.1.jar
 sbt assembly
-# you can find the jar in the directory ./ScalaSpark/target/scala-2.11/
 
-# replace arg0 with the ccm.cfg file (also replace inputs csv file and outputs directory with the path in hdfs)
-spark-submit --master yarn scala-spark-assembly-1.0.jar arg0
+# put/upload local file into hdfs; so you have to change [paths|inputs] in ccm-scala.cfg file to the hdfs path like: /user/bo/test_float_1000.csv
+hadoop fs -put ~/cloud/CCM-Parralization/TestInputCSVData/test_float_1000.csv
+
+# pass ccm-scala.cfg file fullpath as the first argument
+spark-submit --master yarn ./target/scala-2.11/scala-spark-ccm-assembly-0.1.jar ~/cloud/CCM-Parralization/ccm-scala.cfg
 ```
-
-Need to upload config file and input csv file to HDFS
-``` bash
-hadoop fs -put ./ccm.cfg
-hadoop fs -put ./TestInputCSVData/test_float_1000.csv
-```
-
-Submit the jar using the following command (pass the config file path as the first argument)
-```bash
-spark-submit --master yarn scalaspark-assembly-1.0.jar ./ccm.cfg
-```
-
-### PySpark Cluster (with/without GPU acceleration)
-
-
-
-
-#### Compile with cuda code
-```console
-# compile under c standard
-mpicc -o hellow hellow.c
-
-# compile using g++
-g++ -I/home/bo/Desktop/mpich-3.3/src/include -L/home/bo/Desktop/mpich-3.3/lib test.cxx -lmpicxx -lmpi -o ccm
-
-# compile with cuda and openmp c++
-nvcc -Xcompiler -fopenmp -std=c++11 -lgomp -I/home/bo/Desktop/mpich-3.3/src/include -L/home/bo/Desktop/mpich-3.3/lib test.cu -lmpicxx -lmpi -o ccmwithcuda
-```
-
-#### Run using mpirun after compilation
-option for mpirun: 
-```console
-mpirun -np 4 ./hellow
-```
--pernode, --pernode
-On each node, launch one process -- equivalent to -npernode 1. (deprecated in favor of --map-by ppr:1:node)
-
--H, -host, --host <host1,host2,...,hostN>
-List of hosts on which to invoke processes.
--hostfile, --hostfile <hostfile>
-Provide a hostfile to use.
