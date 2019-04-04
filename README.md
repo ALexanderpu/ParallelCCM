@@ -94,7 +94,7 @@ sudo service lightdm start
 3. Compile and run parallel CCM in single machine:
 ```bash
 # download the project and cd into the project folder. 
-# replacy the ccm.cfg full filepath in runsinglemachine.sh and run
+# replace the ccm.cfg full filepath in runsinglemachine.sh and run
 bash ./runsinglemachine.sh
 ```
 
