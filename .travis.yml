@@ -1,10 +1,4 @@
 language: bash
 
-install: make get-deps
-compiler:
-  - clang
-  - gcc
-  - g++
 script:
-    - bash runsinglemachine.sh
     - echo "finished!"
