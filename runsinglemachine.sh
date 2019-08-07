@@ -31,5 +31,5 @@ then
     # pass the config file here
     ./SingleVersion/singlemachine ./ccm.cfg # configure file fullpath needs to be replaced
 else
-    echo "the compiling process fail!"
+    echo "the compiling process failed!"
 fi
